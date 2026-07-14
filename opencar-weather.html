@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>오픈 데이 — 탑 오픈 판정</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dash:#16181D; --panel:#1E2128; --panel2:#242832; --line:#2F3440;
+  --ink:#EDEFF3; --sub:#9AA3B2; --amber:#FFB454; --ice:#7FD4E8;
+  --good:#5AD48A; --warn:#FFB454; --bad:#F0655A;
+  --sky-a:#6FBEE8; --sky-b:#FFEFC2;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'IBM Plex Sans KR',sans-serif;background:var(--dash);color:var(--ink);min-height:100vh}
+.wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* ---------- 하늘 & 차량 히어로 ---------- */
+.sky{position:relative;height:320px;overflow:hidden;background:linear-gradient(180deg,var(--sky-a) 0%,var(--sky-b) 85%);transition:background 1s}
+.sky.theme-warn{--sky-a:#D9B679;--sky-b:#F2E7CF}
+.sky.theme-bad{--sky-a:#7C8894;--sky-b:#B9C2CB}
+.sun{position:absolute;top:34px;right:44px;width:64px;height:64px;border-radius:50%;
+  background:radial-gradient(circle,#FFE9A8 30%,#FFD166 70%);
+  box-shadow:0 0 60px 24px rgba(255,209,102,.55);transition:opacity .8s}
+.sky.theme-bad .sun{opacity:.12;box-shadow:none}
+.cloud{position:absolute;background:rgba(255,255,255,.85);border-radius:40px;filter:blur(1px);animation:drift linear infinite}
+.sky.theme-bad .cloud{background:rgba(230,234,238,.9)}
+@keyframes drift{from{transform:translateX(-140px)}to{transform:translateX(600px)}}
+.rain{position:absolute;inset:0;pointer-events:none;display:none}
+.sky.theme-bad .rain.on{display:block}
+.drop{position:absolute;top:-20px;width:2px;height:14px;background:rgba(90,110,130,.55);border-radius:2px;animation:fall .9s linear infinite}
+@keyframes fall{to{transform:translateY(360px)}}
+.road{position:absolute;left:0;right:0;bottom:0;height:56px;background:#2B2E33}
+.road::before{content:"";position:absolute;top:26px;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,#FFD166 0 34px,transparent 34px 68px);opacity:.7}
+.car{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:340px}
+.loc{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:6px;
+  background:rgba(20,24,30,.55);backdrop-filter:blur(6px);color:#fff;font-size:12.5px;
+  padding:7px 12px;border-radius:20px;border:none;font-family:inherit;cursor:pointer}
+.loc svg{width:13px;height:13px}
+
+/* 소프트탑 애니메이션 */
+.top-seg{transform-box:fill-box;transition:transform 1.1s cubic-bezier(.6,0,.3,1),opacity .9s}
+.seg1{transform-origin:100% 100%}
+.seg2{transform-origin:100% 100%;transition-delay:.12s}
+.seg3{transform-origin:100% 100%;transition-delay:.24s}
+.car.open .seg1{transform:rotate(72deg) scale(.55);opacity:0}
+.car.open .seg2{transform:rotate(58deg) scale(.5);opacity:0}
+.car.open .seg3{transform:rotate(40deg) scale(.45);opacity:0}
+.folded{opacity:0;transform:translateY(8px);transform-box:fill-box;transition:all .7s .9s}
+.car.open .folded{opacity:1;transform:translateY(0)}
+.lock-badge{opacity:0;transition:opacity .6s .4s}
+.car.locked .lock-badge{opacity:1}
+.car.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 5px))}75%{transform:translateX(calc(-50% + 5px))}}
+@media (prefers-reduced-motion: reduce){
+  .top-seg,.folded,.cloud,.drop{transition:none;animation:none}
+}
+
+/* ---------- 대시보드 ---------- */
+.dash{flex:1;background:var(--dash);border-radius:22px 22px 0 0;margin-top:-18px;position:relative;
+  padding:22px 18px calc(28px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.35)}
+.verdict{text-align:center;margin-bottom:6px}
+.verdict h1{font-family:'Black Han Sans',sans-serif;font-size:42px;letter-spacing:1px;line-height:1.15}
+.verdict h1.v-good{color:var(--good)}
+.verdict h1.v-warn{color:var(--warn)}
+.verdict h1.v-bad{color:var(--bad)}
+.verdict p{color:var(--sub);font-size:14px;margin-top:4px}
+.updated{text-align:center;color:#5B6472;font-size:11px;font-family:'Chakra Petch';margin-bottom:16px}
+
+.alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:12px;font-size:13.5px;line-height:1.45}
+.alert .ic{font-size:16px;line-height:1.3}
+.alert.a-warn{background:rgba(255,180,84,.12);border:1px solid rgba(255,180,84,.3);color:#FFD9A3}
+.alert.a-bad{background:rgba(240,101,90,.12);border:1px solid rgba(240,101,90,.32);color:#FFB3AC}
+.alert.a-good{background:rgba(90,212,138,.1);border:1px solid rgba(90,212,138,.28);color:#A9EDC5}
+
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.g{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 10px;text-align:center}
+.g .lb{font-size:11px;color:var(--sub);letter-spacing:.06em;margin-bottom:5px}
+.g .vl{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:19px}
+.g .st{font-size:11px;margin-top:3px;font-weight:500}
+.st.ok{color:var(--good)}.st.mid{color:var(--warn)}.st.ng{color:var(--bad)}
+
+.sec-t{font-size:12px;color:var(--sub);letter-spacing:.14em;margin-bottom:10px;font-family:'Chakra Petch'}
+.timeline{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
+.timeline::-webkit-scrollbar{display:none}
+.hr{flex:0 0 46px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:8px 4px;text-align:center}
+.hr.now{border-color:var(--ice);background:var(--panel2)}
+.hr .h{font-size:10.5px;color:var(--sub);font-family:'Chakra Petch'}
+.hr .e{font-size:15px;margin:3px 0}
+.hr .d{width:8px;height:8px;border-radius:50%;margin:2px auto 0}
+.d.ok{background:var(--good)}.d.mid{background:var(--warn)}.d.ng{background:var(--bad)}
+.legend{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--sub);margin-bottom:4px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.state{padding:60px 20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7}
+.state button,.citybtns button{margin-top:14px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  font-family:inherit;font-size:13.5px;padding:10px 18px;border-radius:10px;cursor:pointer}
+.citybtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--ice);border-radius:50%;
+  margin:0 auto 16px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.foot{text-align:center;color:#4A5260;font-size:11px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sky" id="sky">
+    <div class="sun"></div>
+    <div class="rain" id="rain"></div>
+    <button class="loc" id="locBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <span id="locName">위치 확인 중…</span>
+    </button>
+    <div class="road"></div>
+
+    <!-- 로드스터 -->
+    <svg class="car" id="car" viewBox="0 0 340 130" aria-label="컨버터블 차량">
+      <!-- 소프트탑 (3분할 접힘) -->
+      <g id="softtop">
+        <path class="top-seg seg3" d="M118 58 Q126 34 152 28 L156 44 Q136 48 128 60 Z" fill="#23262B"/>
+        <path class="top-seg seg2" d="M152 28 Q176 24 196 28 L194 46 Q176 42 156 44 Z" fill="#2A2E34"/>
+        <path class="top-seg seg1" d="M196 28 Q222 34 232 54 L216 60 Q210 50 194 46 Z" fill="#23262B"/>
+      </g>
+      <!-- 접힌 탑 (열림 상태에서 등장) -->
+      <g class="folded">
+        <rect x="196" y="56" width="42" height="9" rx="4.5" fill="#23262B"/>
+        <rect x="200" y="50" width="34" height="8" rx="4" fill="#2A2E34"/>
+      </g>
+      <!-- 윈드실드 -->
+      <path d="M112 62 L126 38 L134 40 L122 63 Z" fill="#8FCFE4" opacity=".9"/>
+      <!-- 차체 -->
+      <path d="M18 92 Q16 78 30 74 L58 68 Q86 60 112 62 L232 62 Q272 64 296 74 Q318 80 320 92 L318 100 Q316 106 308 106 L282 106
+               A26 26 0 0 0 230 106 L112 106 A26 26 0 0 0 60 106 L30 106 Q20 106 18 100 Z" fill="#C43A3A"/>
+      <path d="M18 92 Q16 78 30 74 L58 68 Q86 60 112 62 L232 62 Q272 64 296 74 L296 80 Q250 72 170 72 Q90 72 24 84 Z" fill="#D24848"/>
+      <!-- 콕핏 -->
+      <path d="M120 63 L212 63 Q222 63 224 68 L222 72 L122 72 Q118 68 120 63Z" fill="#14161A"/>
+      <!-- 헤드/테일 램프 -->
+      <path d="M304 78 Q316 82 318 90 L306 90 Q300 84 304 78Z" fill="#FFE9A8"/>
+      <path d="M20 88 L30 84 L30 92 L20 94Z" fill="#F0655A"/>
+      <!-- 휠 -->
+      <g><circle cx="86" cy="106" r="20" fill="#1A1C20"/><circle cx="86" cy="106" r="11" fill="#3A3F47"/><circle cx="86" cy="106" r="4" fill="#6B7280"/></g>
+      <g><circle cx="256" cy="106" r="20" fill="#1A1C20"/><circle cx="256" cy="106" r="11" fill="#3A3F47"/><circle cx="256" cy="106" r="4" fill="#6B7280"/></g>
+      <!-- 잠김 배지 -->
+      <g class="lock-badge">
+        <circle cx="170" cy="26" r="14" fill="rgba(20,22,26,.85)"/>
+        <rect x="164" y="24" width="12" height="9" rx="2" fill="#F0655A"/>
+        <path d="M166 24 v-3 a4 4 0 0 1 8 0 v3" stroke="#F0655A" stroke-width="2" fill="none"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="dash" id="dash">
+    <div class="state" id="stLoading"><div class="spin"></div>현 위치의 하늘을 읽는 중…</div>
+
+    <div class="state" id="stDenied" style="display:none">
+      위치 권한이 꺼져 있어요.<br>도시를 선택하면 그 지역 기준으로 판정할게요.
+      <div class="citybtns" id="cityBtns" style="margin-top:16px"></div>
+      <button id="retryGeo">위치 권한 다시 요청</button>
+    </div>
+
+    <div class="state" id="stError" style="display:none">
+      날씨 데이터를 불러오지 못했어요.<br>네트워크 확인 후 다시 시도해 주세요.
+      <br><button onclick="location.reload()">다시 시도</button>
+    </div>
+
+    <div id="result" style="display:none">
+      <div class="verdict"><h1 id="vTitle"></h1><p id="vSub"></p></div>
+      <div class="updated" id="vTime"></div>
+      <div class="alerts" id="alerts"></div>
+
+      <div class="gauges">
+        <div class="g"><div class="lb">기온 / 체감</div><div class="vl" id="gTemp">—</div><div class="st" id="gTempS"></div></div>
+        <div class="g"><div class="lb">자외선 UV</div><div class="vl" id="gUv">—</div><div class="st" id="gUvS"></div></div>
+        <div class="g"><div class="lb">초미세 PM2.5</div><div class="vl" id="gPm25">—</div><div class="st" id="gPm25S"></div></div>
+        <div class="g"><div class="lb">미세 PM10</div><div class="vl" id="gPm10">—</div><div class="st" id="gPm10S"></div></div>
+        <div class="g"><div class="lb">강수확률(최대)</div><div class="vl" id="gRain">—</div><div class="st" id="gRainS"></div></div>
+        <div class="g"><div class="lb">바람</div><div class="vl" id="gWind">—</div><div class="st" id="gWindS"></div></div>
+      </div>
+
+      <div class="sec-t">TODAY · 시간대별 오픈 신호</div>
+      <div class="timeline" id="timeline"></div>
+      <div class="legend">
+        <span><i style="background:var(--good)"></i>오픈 OK</span>
+        <span><i style="background:var(--warn)"></i>주의</span>
+        <span><i style="background:var(--bad)"></i>닫기 권장</span>
+      </div>
+      <div class="foot">데이터: Open-Meteo · 차량을 탭하면 애니메이션 재생</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CITIES=[["서울",37.5665,126.9780],["부산",35.1796,129.0756],["대구",35.8714,128.6014],["인천",37.4563,126.7052],["광주",35.1595,126.8526],["대전",36.3504,127.3845],["제주",33.4996,126.5312]];
+let verdictLevel=null;
+
+// 빗방울 & 구름 생성
+(function(){
+  const r=$('rain');
+  for(let i=0;i<26;i++){const d=document.createElement('div');d.className='drop';
+    d.style.left=(Math.random()*100)+'%';d.style.animationDelay=(Math.random()*0.9)+'s';
+    d.style.animationDuration=(0.7+Math.random()*0.5)+'s';r.appendChild(d);}
+  const sky=$('sky');
+  [[60,20,90,26,26],[150,55,120,32,40],[10,110,80,22,55]].forEach(([l,t,w,h,dur])=>{
+    const c=document.createElement('div');c.className='cloud';
+    c.style.cssText=`left:${l}px;top:${t}px;width:${w}px;height:${h}px;animation-duration:${dur}s`;
+    sky.appendChild(c);});
+})();
+
+// 위치
+function start(){
+  if(!navigator.geolocation){showCityPick();return;}
+  navigator.geolocation.getCurrentPosition(
+    p=>load(p.coords.latitude,p.coords.longitude,null),
+    ()=>showCityPick(),{timeout:9000,maximumAge:600000});
+}
+function showCityPick(){
+  $('stLoading').style.display='none';$('stDenied').style.display='block';
+  const box=$('cityBtns');box.innerHTML='';
+  CITIES.forEach(([n,la,lo])=>{const b=document.createElement('button');b.textContent=n;
+    b.onclick=()=>{$('stDenied').style.display='none';$('stLoading').style.display='block';load(la,lo,n);};
+    box.appendChild(b);});
+  $('locName').textContent='위치 미확인';
+}
+$('retryGeo').onclick=()=>{$('stDenied').style.display='none';$('stLoading').style.display='block';start();};
+$('locBtn').onclick=start;
+
+async function load(lat,lon,cityName){
+  try{
+    const [wr,ar]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,uv_index,precipitation&hourly=precipitation_probability,weather_code&timezone=auto&forecast_days=1`),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5&timezone=auto`)
+    ]);
+    const w=await wr.json(), a=await ar.json();
+    if(!cityName){
+      try{const g=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`);await g.json();}catch(e){}
+      cityName='내 위치';
+    }
+    $('locName').textContent=cityName;
+    render(w,a);
+  }catch(e){
+    $('stLoading').style.display='none';$('stError').style.display='block';
+  }
+}
+
+const isRainCode=c=>(c>=51&&c<=67)||(c>=71&&c<=77)||(c>=80&&c<=86)||(c>=95);
+function pmGrade25(v){return v<=15?0:v<=35?1:v<=75?2:3}
+function pmGrade10(v){return v<=30?0:v<=80?1:v<=150?2:3}
+const PM_TXT=['좋음','보통','나쁨','매우나쁨'];
+
+function render(w,a){
+  const cur=w.current, air=a.current;
+  const now=new Date(cur.time);
+  const nowH=now.getHours();
+
+  // 앞으로 8시간 강수확률 최대
+  const hh=w.hourly.time.map(t=>new Date(t).getHours());
+  let maxProb=0, rainSoonH=null;
+  w.hourly.time.forEach((t,i)=>{
+    const h=hh[i];
+    if(h>=nowH&&h<=Math.min(nowH+8,23)){
+      if(w.hourly.precipitation_probability[i]>maxProb){maxProb=w.hourly.precipitation_probability[i];}
+      if(rainSoonH===null&&isRainCode(w.hourly.weather_code[i]))rainSoonH=h;
+    }
+  });
+
+  const g25=pmGrade25(air.pm2_5), g10=pmGrade10(air.pm10);
+  const pmWorst=Math.max(g25,g10);
+  const wind=cur.wind_speed_10m, temp=cur.temperature_2m, feel=cur.apparent_temperature, uv=cur.uv_index;
+  const rainingNow=isRainCode(cur.weather_code)||cur.precipitation>0;
+
+  // ---- 판정 ----
+  const bads=[], warns=[], goods=[];
+  if(rainingNow) bads.push(['🌧','지금 비가 내리고 있어요. 탑을 닫아 두세요.']);
+  else if(maxProb>=60) bads.push(['🌧',`오늘 강수확률이 최대 ${maxProb}%예요. ${rainSoonH?rainSoonH+'시경 비 가능성 — ':''}오픈 주행은 피하는 게 안전해요.`]);
+  else if(maxProb>=30) warns.push(['☔',`강수확률 ${maxProb}% — 짧은 코스 위주로, 하늘이 어두워지면 바로 탑을 닫으세요.`]);
+
+  if(pmWorst>=3) bads.push(['😷',`미세먼지 매우나쁨 (PM2.5 ${air.pm2_5}·PM10 ${air.pm10}㎍/㎥). 오픈 시 호흡기에 직접 노출돼요.`]);
+  else if(pmWorst===2) warns.push(['😷',`미세먼지 나쁨 수준이에요. 장거리 오픈 주행은 피하고, 시내 정체 구간에선 탑을 닫는 게 좋아요.`]);
+
+  if(wind>=40) bads.push(['💨',`강풍 ${Math.round(wind)}km/h — 고속 주행 시 소음·버피팅이 심하고 위험할 수 있어요.`]);
+  else if(wind>=25) warns.push(['💨',`바람이 다소 강해요 (${Math.round(wind)}km/h). 고속도로에선 윈드 디플렉터를 쓰거나 창문을 올리세요.`]);
+
+  if(feel<=0) bads.push(['🥶',`체감 ${Math.round(feel)}°C — 오픈 주행엔 너무 추워요.`]);
+  else if(feel<8) warns.push(['🧣',`체감 ${Math.round(feel)}°C로 쌀쌀해요. 시트 히터·목토시 준비하면 오픈 가능!`]);
+
+  // 요구사항 #2: 강한 햇빛 / 고온 주의 문구
+  if(uv>=8) warns.push(['🕶','자외선이 매우 강해요. 썬크림·선글라스·모자 없이는 짧은 주행도 피부가 익어요.']);
+  else if(uv>=6) warns.push(['☀','햇빛이 강한 날이에요. 썬크림 바르고 출발하세요.']);
+  if(temp>=33) warns.push(['🥵',`기온 ${Math.round(temp)}°C — 오픈 시 에어컨 효과가 거의 없어요. 정체 구간에선 열사병 주의, 물을 챙기세요.`]);
+  else if(temp>=30) warns.push(['🌡',`기온 ${Math.round(temp)}°C의 더운 날 — 한낮보다는 아침·저녁 오픈 주행을 추천해요.`]);
+
+  let level;
+  if(bads.length) level='bad';
+  else if(warns.length) level='warn';
+  else {level='good'; goods.push(['🏁','비·미세먼지·바람 모두 합격. 완벽한 오픈 데이입니다!']);}
+  verdictLevel=level;
+
+  // ---- 화면 ----
+  const sky=$('sky');
+  sky.classList.remove('theme-warn','theme-bad');
+  if(level==='warn')sky.classList.add('theme-warn');
+  if(level==='bad')sky.classList.add('theme-bad');
+  $('rain').classList.toggle('on',rainingNow);
+
+  const V={good:['오픈 가능!','지붕 열고 달리기 좋은 날이에요'],
+           warn:['조건부 오픈','아래 주의사항만 지키면 열 수 있어요'],
+           bad:['오늘은 클로즈드','탑은 닫아 두는 게 좋겠어요']}[level];
+  $('vTitle').textContent=V[0];$('vTitle').className='v-'+level;
+  $('vSub').textContent=V[1];
+  $('vTime').textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})+' '+String(nowH).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+' 기준';
+
+  const al=$('alerts');al.innerHTML='';
+  [...bads.map(x=>['a-bad',...x]),...warns.map(x=>['a-warn',...x]),...goods.map(x=>['a-good',...x])]
+    .forEach(([cl,ic,tx])=>{const d=document.createElement('div');d.className='alert '+cl;
+      d.innerHTML=`<span class="ic">${ic}</span><span>${tx}</span>`;al.appendChild(d);});
+
+  // 게이지
+  setG('gTemp',`${Math.round(temp)}°/${Math.round(feel)}°`, temp>=33||feel<=0?'ng':temp>=30||feel<8?'mid':'ok', temp>=30?'더움':feel<8?'쌀쌀':'적당');
+  setG('gUv',uv.toFixed(1), uv>=8?'ng':uv>=6?'mid':'ok', uv>=8?'매우강함':uv>=6?'강함':uv>=3?'보통':'낮음');
+  setG('gPm25',Math.round(air.pm2_5), g25>=3?'ng':g25===2?'ng':g25===1?'mid':'ok', PM_TXT[g25]);
+  setG('gPm10',Math.round(air.pm10), g10>=3?'ng':g10===2?'ng':g10===1?'mid':'ok', PM_TXT[g10]);
+  setG('gRain',maxProb+'%', maxProb>=60?'ng':maxProb>=30?'mid':'ok', maxProb>=60?'비 옴':maxProb>=30?'가능성':'맑음');
+  setG('gWind',Math.round(wind)+'㎞/h', wind>=40?'ng':wind>=25?'mid':'ok', wind>=40?'강풍':wind>=25?'다소 강함':'양호');
+
+  // 시간대별 타임라인 (06~22시)
+  const tl=$('timeline');tl.innerHTML='';
+  const EMO=c=>isRainCode(c)?'🌧':c<=1?'☀':c===2?'⛅':'☁';
+  w.hourly.time.forEach((t,i)=>{
+    const h=hh[i]; if(h<6||h>22)return;
+    const prob=w.hourly.precipitation_probability[i], code=w.hourly.weather_code[i];
+    let s='ok';
+    if(isRainCode(code)||prob>=60||pmWorst>=3) s='ng';
+    else if(prob>=30||pmWorst===2) s='mid';
+    const div=document.createElement('div');div.className='hr'+(h===nowH?' now':'');
+    div.innerHTML=`<div class="h">${h}시</div><div class="e">${EMO(code)}</div><div class="d ${s}"></div>`;
+    tl.appendChild(div);
+  });
+
+  $('stLoading').style.display='none';$('stError').style.display='none';
+  $('result').style.display='block';
+
+  // 탑 애니메이션
+  const car=$('car');
+  car.classList.remove('open','locked');
+  setTimeout(()=>{
+    if(level==='bad'){car.classList.add('locked');}
+    else car.classList.add('open');
+  },600);
+  const nowEl=tl.querySelector('.hr.now');
+  if(nowEl)nowEl.scrollIntoView({inline:'center',block:'nearest'});
+}
+
+function setG(id,val,cls,txt){$(id).textContent=val;const s=$(id+'S');s.textContent=txt;s.className='st '+cls;}
+
+// 차량 탭 → 재생 (닫힘이면 흔들림)
+$('car').addEventListener('click',()=>{
+  const car=$('car');
+  if(verdictLevel==='bad'){car.classList.remove('shake');void car.offsetWidth;car.classList.add('shake');return;}
+  car.classList.remove('open');void car.offsetWidth;
+  setTimeout(()=>car.classList.add('open'),80);
+});
+
+start();
+</script>
+</body>
+</html>
