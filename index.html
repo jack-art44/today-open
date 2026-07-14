@@ -3,131 +3,345 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>뚜따 — 탑 오픈 판정</title>
+<title>OPEN-AIR — 오픈에어링 판정</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="뚜따">
-<meta name="theme-color" content="#12141B">
-<link rel="manifest" href='data:application/manifest+json,{"name":"뚜따 - 탑 오픈 판정","short_name":"뚜따","display":"standalone","background_color":"%2312141B","theme_color":"%2312141B","start_url":"."}'>
+<meta name="apple-mobile-web-app-title" content="오픈에어">
+<meta name="theme-color" content="#0C0D10">
+<link rel="manifest" href='data:application/manifest+json,{"name":"오픈에어링 판정","short_name":"오픈에어","display":"standalone","background_color":"%230C0D10","theme_color":"%230C0D10","start_url":"."}'>
 <style>
-@font-face{
-  font-family:'DungGeunMo';
-  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3.0/DungGeunMo.woff') format('woff');
-  font-display:swap;
-}
 :root{
-  --bg:#12141B; --card:#191C25; --line:#262B38;
-  --ink:#F2F3F7; --sub:#8F96A8; --faint:#565D70;
-  --red:#C63B44; --mint:#5FD99A; --amber:#F5B94E; --coral:#F26D5F; --ice:#7FC8DE;
+  --bg:#0C0D10; --ink:#F5F6F8; --sub:#9AA0AC; --faint:#5B616D;
+  --glass:rgba(255,255,255,.055); --glass-b:rgba(255,255,255,.11);
+  --good:#7BD8A8; --warn:#E8C177; --bad:#E08A80; --gold:#C9A96A; --ice:#8FC9DE;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard',sans-serif;
-  background:var(--bg);color:var(--ink);min-height:100vh}
-.px{font-family:'DungGeunMo',monospace;-webkit-font-smoothing:none;letter-spacing:.02em}
+body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Apple SD Gothic Neo',sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;font-weight:400}
 .wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
 
-/* ============ 하늘 (픽셀은 여기에만) ============ */
-.sky{position:relative;height:328px;overflow:hidden;
-  background:linear-gradient(180deg,#79C0E6 0 26%,#95CFEC 0 48%,#B9E1F0 0 68%,#E4F1EA 0 84%,#F8ECCF 0 100%)}
-.sky.theme-warn{background:linear-gradient(180deg,#C9A868 0 26%,#D7BB84 0 48%,#E6D2A6 0 68%,#F0E4C6 0 84%,#F8F0DC 0 100%)}
-.sky.theme-bad{background:linear-gradient(180deg,#707D8A 0 26%,#828F9C 0 48%,#98A5B0 0 68%,#B0BCC5 0 84%,#C8D2D9 0 100%)}
-.pxsun{position:absolute;top:36px;right:52px;width:6px;height:6px;background:#FFD76A;transition:opacity .6s;
-  box-shadow:6px 0 #FFD76A,12px 0 #FFD76A,
-   -6px 6px #FFD76A,0 6px #FFE9A0,6px 6px #FFF3C8,12px 6px #FFE9A0,18px 6px #FFD76A,
-   -6px 12px #FFD76A,0 12px #FFF3C8,6px 12px #FFF9E4,12px 12px #FFF3C8,18px 12px #FFD76A,
-   -6px 18px #FFD76A,0 18px #FFE9A0,6px 18px #FFF3C8,12px 18px #FFE9A0,18px 18px #FFD76A,
-   0 24px #FFD76A,6px 24px #FFD76A,12px 24px #FFD76A}
-.sky.theme-bad .pxsun{opacity:.12}
-.pxcloud{position:absolute;animation:drift linear infinite}
-.pxcloud i{position:absolute;background:rgba(255,255,255,.9);display:block}
-.sky.theme-bad .pxcloud i{background:#D8DFE5}
-@keyframes drift{from{transform:translateX(-170px)}to{transform:translateX(640px)}}
-.pxrain{position:absolute;inset:0;display:none;pointer-events:none}
-.sky.theme-bad .pxrain.on{display:block}
-.pxdrop{position:absolute;top:-16px;width:2px;height:9px;background:#5E7186;animation:fall .8s linear infinite}
-@keyframes fall{to{transform:translateY(370px)}}
-.road{position:absolute;left:0;right:0;bottom:0;height:46px;background:#20232B;border-top:3px solid #2A2E38}
-.road::before{content:"";position:absolute;top:20px;left:0;right:0;height:3px;
-  background:repeating-linear-gradient(90deg,#E8C05C 0 22px,transparent 22px 54px);opacity:.85}
-.loc{position:absolute;top:12px;left:12px;z-index:5;display:flex;align-items:center;gap:7px;
-  background:rgba(18,20,27,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);
-  color:#fff;font-size:12.5px;padding:7px 12px;border-radius:8px;font-family:inherit;cursor:pointer}
-.loc .pin{width:6px;height:6px;background:var(--red)}
-.gps{position:absolute;top:12px;right:12px;z-index:5;background:rgba(18,20,27,.72);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.14);color:#B9C0CF;font-size:11px;padding:8px 10px;border-radius:8px}
-.gps.ok{color:var(--mint)}
-#carCanvas{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);
-  image-rendering:pixelated;image-rendering:crisp-edges;cursor:pointer}
-#carCanvas.shake{animation:shk .45s}
-@keyframes shk{0%,100%{transform:translateX(-50%)}20%{transform:translateX(calc(-50% - 5px))}60%{transform:translateX(calc(-50% + 5px))}}
-.stage-cap{position:absolute;left:0;right:0;bottom:52px;text-align:center;font-size:12px;
-  color:#20242E;letter-spacing:.04em}
-.sky.theme-bad .stage-cap{color:#F2F3F7}
+/* ================= HERO ================= */
+.sky{position:relative;height:352px;overflow:hidden;
+  background:linear-gradient(180deg,#7DB8DE 0%,#A9CFE8 42%,#E9E2D2 78%,#F3E3C2 100%);
+  transition:background 1.2s ease}
+.sky.theme-warn{background:linear-gradient(180deg,#C0A26C 0%,#D9C298 42%,#EEDFC2 78%,#F6EDD8 100%)}
+.sky.theme-bad{background:linear-gradient(180deg,#535E6A 0%,#75818E 42%,#9AA6B0 78%,#B9C3CB 100%)}
+.sunGlow{position:absolute;top:-40px;right:-10px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,236,190,.95) 0%,rgba(255,225,160,.35) 42%,transparent 70%);
+  filter:blur(2px);transition:opacity 1s}
+.sky.theme-bad .sunGlow{opacity:.1}
+.cl{position:absolute;background:rgba(255,255,255,.55);border-radius:999px;filter:blur(10px);
+  animation:drift linear infinite}
+.sky.theme-bad .cl{background:rgba(235,240,244,.5)}
+@keyframes drift{from{transform:translateX(-220px)}to{transform:translateX(680px)}}
+.rain{position:absolute;inset:0;display:none;pointer-events:none}
+.sky.theme-bad .rain.on{display:block}
+.streak{position:absolute;top:-30px;width:1.5px;height:22px;border-radius:1px;
+  background:linear-gradient(180deg,transparent,rgba(90,110,130,.55));animation:fall .75s linear infinite}
+@keyframes fall{to{transform:translateY(400px)}}
+.road{position:absolute;left:0;right:0;bottom:0;height:44px;background:#17181D}
+.road::before{content:"";position:absolute;top:19px;left:0;right:0;height:2px;
+  background:repeating-linear-gradient(90deg,rgba(201,169,106,.55) 0 26px,transparent 26px 62px)}
+.chip{position:absolute;z-index:6;display:flex;align-items:center;gap:7px;
+  background:rgba(14,15,20,.42);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.16);color:#fff;font-size:12.5px;
+  padding:8px 13px;border-radius:99px;font-family:inherit;cursor:pointer}
+.chip .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+#locBtn{top:14px;left:14px}
+#gpsBadge{top:14px;right:14px;color:#C6CCD6;font-size:11px;cursor:default}
+#gpsBadge.ok{color:var(--good)}
+#carBox{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(94vw,480px);cursor:pointer}
+#carBox.shake{animation:shk .45s}
+@keyframes shk{0%,100%{transform:translateX(-50%)}22%{transform:translateX(calc(-50% - 5px))}66%{transform:translateX(calc(-50% + 5px))}}
+#carBox svg{width:100%;height:auto;display:none}
+#carBox svg.active{display:block}
+.stage-cap{position:absolute;left:0;right:0;bottom:50px;text-align:center;font-size:12px;
+  letter-spacing:.12em;color:rgba(20,24,32,.72);font-weight:500;transition:opacity .4s}
+.sky.theme-bad .stage-cap{color:rgba(245,246,248,.85)}
 
-/* ============ 대시보드 (절제) ============ */
-.dash{flex:1;background:var(--bg);position:relative;
-  padding:26px 18px calc(30px + env(safe-area-inset-bottom))}
-.verdict{text-align:center;margin-bottom:6px}
-.verdict h1{font-size:38px;font-weight:normal;line-height:1.2}
-.verdict h1.v-good{color:var(--mint)}
-.verdict h1.v-warn{color:var(--amber)}
-.verdict h1.v-bad{color:var(--coral)}
-.verdict .bar{width:44px;height:4px;margin:12px auto 10px;background:var(--red)}
-.verdict p{color:var(--sub);font-size:14px}
-.updated{text-align:center;color:var(--faint);font-size:11px;margin:10px 0 22px}
+/* 차종 셀렉터 */
+.selector{position:relative;z-index:8;display:flex;gap:4px;width:fit-content;margin:-21px auto 0;
+  background:rgba(18,19,24,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:4px}
+.selector button{border:none;background:transparent;color:var(--sub);font-family:inherit;
+  font-size:12.5px;padding:8px 16px;border-radius:99px;cursor:pointer;transition:all .25s;white-space:nowrap}
+.selector button.on{background:rgba(255,255,255,.12);color:var(--ink)}
+
+/* ================= DASH ================= */
+.dash{flex:1;padding:30px 18px calc(32px + env(safe-area-inset-bottom))}
+.eyebrow{text-align:center;font-size:10.5px;letter-spacing:.32em;color:var(--gold);margin-bottom:12px;font-weight:500}
+.verdict{text-align:center}
+.verdict h1{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.35}
+.verdict h1.v-good{color:var(--good)}
+.verdict h1.v-warn{color:var(--warn)}
+.verdict h1.v-bad{color:var(--bad)}
+.verdict p{color:var(--sub);font-size:13.5px;margin-top:8px;font-weight:300}
+.updated{text-align:center;color:var(--faint);font-size:11px;margin:12px 0 24px;font-weight:300}
 
 .alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
-.alert{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;font-size:13.5px;line-height:1.55;
-  background:var(--card);border:1px solid var(--line);border-left-width:3px;border-radius:10px}
-.alert.a-warn{border-left-color:var(--amber);color:#F4DFB4}
-.alert.a-bad{border-left-color:var(--coral);color:#F6C0B8}
-.alert.a-good{border-left-color:var(--mint);color:#BCEBD2}
+.alert{display:flex;gap:11px;align-items:flex-start;padding:13px 15px;font-size:13px;line-height:1.6;
+  background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#D5D9E0;font-weight:300}
+.alert .ic{font-size:15px;line-height:1.5}
+.alert.a-bad{border-color:rgba(224,138,128,.3)}
+.alert.a-warn{border-color:rgba(232,193,119,.28)}
+.alert.a-good{border-color:rgba(123,216,168,.28)}
 
-.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
-.g{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center}
-.g .lb{font-size:10.5px;color:var(--sub);margin-bottom:7px;letter-spacing:.02em}
-.g .vl{font-size:18px}
-.g .st{font-size:11px;margin-top:5px}
-.st.ok{color:var(--mint)}.st.mid{color:var(--amber)}.st.ng{color:var(--coral)}
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:26px}
+.g{background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;padding:13px 8px;text-align:center;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.g .lb{font-size:10px;color:var(--sub);margin-bottom:7px;letter-spacing:.08em;font-weight:500}
+.g .vl{font-size:18px;font-weight:200;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.g .st{font-size:11px;margin-top:5px;font-weight:400}
+.st.ok{color:var(--good)}.st.mid{color:var(--warn)}.st.ng{color:var(--bad)}
 
-.sec-t{font-size:11.5px;color:var(--sub);letter-spacing:.14em;margin-bottom:12px}
-.sec-t b{color:var(--red);font-weight:normal}
-.timeline{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:8px;scrollbar-width:none}
+.sec-t{font-size:10.5px;color:var(--sub);letter-spacing:.28em;margin-bottom:12px;font-weight:500}
+.sec-t::before{content:"— ";color:var(--gold)}
+.timeline{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:10px;scrollbar-width:none}
 .timeline::-webkit-scrollbar{display:none}
-.hr{flex:0 0 46px;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 4px;text-align:center}
-.hr.now{border-color:var(--ice)}
-.hr .h{font-size:10px;color:var(--sub)}
+.hr{flex:0 0 47px;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:9px 4px;text-align:center;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.hr.now{border-color:rgba(201,169,106,.55)}
+.hr .h{font-size:10px;color:var(--sub);font-weight:300}
 .hr .e{font-size:14px;margin:4px 0}
-.hr .d{width:7px;height:7px;margin:2px auto 0}
-.d.ok{background:var(--mint)}.d.mid{background:var(--amber)}.d.ng{background:var(--coral)}
-.legend{display:flex;gap:16px;justify-content:center;font-size:11px;color:var(--sub)}
-.legend i{width:7px;height:7px;display:inline-block;margin-right:5px;vertical-align:middle}
+.hr .d{width:5px;height:5px;border-radius:50%;margin:3px auto 0}
+.d.ok{background:var(--good)}.d.mid{background:var(--warn)}.d.ng{background:var(--bad)}
+.legend{display:flex;gap:18px;justify-content:center;font-size:11px;color:var(--sub);font-weight:300}
+.legend i{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
 
-.state{padding:56px 20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.8}
-.state button,.citybtns button{margin-top:14px;background:var(--card);border:1px solid var(--line);
-  color:var(--ink);font-family:inherit;font-size:13px;padding:10px 18px;border-radius:9px;cursor:pointer}
+.state{padding:56px 20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.9;font-weight:300}
+.state button,.citybtns button{margin-top:14px;background:var(--glass);border:1px solid var(--glass-b);
+  color:var(--ink);font-family:inherit;font-size:13px;padding:10px 20px;border-radius:99px;cursor:pointer;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .citybtns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
-.blink{animation:bl 1s steps(2) infinite}
-@keyframes bl{to{opacity:.25}}
-.foot{text-align:center;color:var(--faint);font-size:11px;margin-top:18px;line-height:1.7}
-@media (prefers-reduced-motion: reduce){.pxcloud,.pxdrop{animation:none}}
+.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pl 1.2s ease infinite}
+@keyframes pl{50%{opacity:.2}}
+.foot{text-align:center;color:var(--faint);font-size:10.5px;margin-top:20px;line-height:1.8;font-weight:300;letter-spacing:.04em}
+
+/* ================= 차량 공통 & 기믹 ================= */
+.mv{transition:transform 1s cubic-bezier(.6,0,.28,1),opacity .7s ease}
+svg .win{transition:transform .8s cubic-bezier(.5,0,.4,1),opacity .8s}
+@media (prefers-reduced-motion: reduce){.mv,svg .win,.cl,.streak{transition:none;animation:none}}
+
+/* ---- 소프트탑 시퀀스 ---- */
+#carSoft .segF{transform-box:fill-box;transform-origin:100% 100%}
+#carSoft .stack{opacity:0;transform:translateY(-10px)}
+#carSoft .tonneau{opacity:0}
+#carSoft .latchdot{opacity:0}
+#carSoft.s-w1 .win{transform:translateY(9px)}
+#carSoft.s-w2 .win{transform:translateY(17px);opacity:.12}
+#carSoft.s-latch .segF{transform:translateY(-3px) rotate(-6deg)}
+#carSoft.s-latch .latchdot{opacity:1;animation:lp .5s ease 2}
+@keyframes lp{50%{opacity:.15}}
+#carSoft.s-f1 .segF{transform:rotate(-126deg)}
+#carSoft.s-f2 .segGrp{opacity:0}
+#carSoft.s-f2 .stack{opacity:1;transform:none}
+#carSoft.s-stow .stack{transform:translateY(8px) scale(.9)}
+#carSoft.s-ton .stack{opacity:0}
+#carSoft.s-ton .tonneau{opacity:1}
+
+/* ---- 하드탑(RHT) 시퀀스 ---- */
+#carRht .trunkLid{transform-box:fill-box;transform-origin:96% 60%}
+#carRht .rearGls{transform-box:fill-box;transform-origin:0% 100%}
+#carRht .trunkStack{opacity:0}
+#carRht.s-w1 .win{transform:translateY(9px)}
+#carRht.s-w2 .win{transform:translateY(17px);opacity:.12}
+#carRht.s-deck .trunkLid{transform:rotate(-44deg)}
+#carRht.s-unlock .rearGls{transform:rotate(16deg)}
+#carRht.s-unlock .roofPnl{transform:translateY(-3px)}
+#carRht.s-slide .roofGrp{transform:translate(58px,28px) rotate(11deg) scale(.8);opacity:0}
+#carRht.s-slide .trunkStack{opacity:1}
+#carRht.s-close .trunkLid{transform:rotate(0)}
+#carRht.s-close .trunkStack{opacity:0}
+
+/* ---- 타르가 시퀀스 ---- */
+#carTarga .canopy{transform-box:fill-box;transform-origin:80% 100%}
+#carTarga .tpanel{transform-box:fill-box;transform-origin:50% 50%}
+#carTarga.s-w1 .win{transform:translateY(8px)}
+#carTarga.s-w2 .win{transform:translateY(15px);opacity:.12}
+#carTarga.s-lift .canopy{transform:translate(5px,-26px) rotate(6deg)}
+#carTarga.s-unlock .tpanel{transform:translateY(-5px) rotate(-5deg)}
+#carTarga.s-slide .tpanel{transform:translate(64px,14px) scale(.85);opacity:0}
+#carTarga.s-close .canopy{transform:none}
+
+/* 공통: 잠금/샤인 */
+svg .lockChip{opacity:0;transition:opacity .5s}
+svg.s-lock .lockChip{opacity:1}
+svg.s-lock .lockGlyph{animation:lockPulse 1s ease 3}
+@keyframes lockPulse{50%{opacity:.35}}
+svg .shine{opacity:0}
+svg.s-done .shine{opacity:1;animation:sweep 1.4s ease forwards}
+@keyframes sweep{from{transform:translateX(-160px)}to{transform:translateX(360px)}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="sky" id="sky">
-    <div class="pxsun"></div>
-    <div class="pxrain" id="rain"></div>
-    <button class="loc" id="locBtn"><span class="pin"></span><span id="locName">위치 확인 중…</span></button>
-    <div class="gps" id="gpsBadge">GPS…</div>
-    <canvas id="carCanvas" width="160" height="64"></canvas>
-    <div class="stage-cap px" id="stageCap"></div>
+    <div class="sunGlow"></div>
+    <div class="rain" id="rain"></div>
+    <button class="chip" id="locBtn"><span class="dot"></span><span id="locName">위치 확인 중…</span></button>
+    <div class="chip" id="gpsBadge">GPS…</div>
+
+    <div id="carBox">
+      <!-- ═══ 소프트탑 로드스터 (화이트 · 레드탑) ═══ -->
+      <svg id="carSoft" class="active" viewBox="0 0 360 150">
+        <defs>
+          <linearGradient id="bodyG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FDFDFE"/><stop offset=".55" stop-color="#E9ECF0"/><stop offset="1" stop-color="#C6CCD5"/>
+          </linearGradient>
+          <linearGradient id="glassG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#C4E8F3"/><stop offset="1" stop-color="#84BFD4"/>
+          </linearGradient>
+          <linearGradient id="redG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#D2525C"/><stop offset="1" stop-color="#A93640"/>
+          </linearGradient>
+          <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="rgba(255,255,255,0)"/><stop offset=".5" stop-color="rgba(255,255,255,.5)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
+        <!-- 시트 & 롤후프 (탑 아래) -->
+        <rect x="194" y="44" width="11" height="17" rx="4" fill="#262A34"/>
+        <rect x="220" y="44" width="11" height="17" rx="4" fill="#262A34"/>
+        <path d="M196 44 q5 -10 10 0" stroke="#D9DEE6" stroke-width="3" fill="none"/>
+        <path d="M222 44 q5 -10 10 0" stroke="#D9DEE6" stroke-width="3" fill="none"/>
+        <!-- 사이드 윈도우 -->
+        <path class="win" d="M180 42 L238 42 L241 58 L178 58 Z" fill="url(#glassG)" opacity=".9"/>
+        <!-- 보디 -->
+        <path d="M24 96 C22 86 30 80 44 77 L60 74 C100 66 138 62 152 61 L162 60 L236 60 C268 58 296 62 314 70 C330 77 338 84 338 92 L336 102 C335 108 330 110 322 110 L301 110 A28 28 0 0 0 243 110 L127 110 A28 28 0 0 0 69 110 L38 110 C28 110 23 105 24 96 Z"
+          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
+        <path d="M38 103 C120 107 260 107 330 101 L329 107 L40 107 Z" fill="rgba(0,0,0,.10)"/>
+        <!-- 콕핏 -->
+        <path d="M166 60 L262 60 L266 66 L170 66 Z" fill="#1F222B"/>
+        <!-- 윈드실드 -->
+        <path d="M150 62 L172 34 L179 36 L158 63 Z" fill="#1A1D24"/>
+        <path d="M156 60 L174 37 L177 38 L161 61 Z" fill="url(#glassG)" opacity=".95"/>
+        <!-- 디테일 -->
+        <rect x="22" y="95" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
+        <path d="M34 76 C48 72 62 71 70 71 L70 76 C58 76 46 78 36 80 Z" fill="#F4E7C4" stroke="rgba(0,0,0,.14)"/>
+        <rect x="146" y="82" width="10" height="4" rx="2" fill="#1A1D24"/><circle cx="149" cy="84" r="1.4" fill="#E8A24E"/>
+        <path d="M158 63 L154 107" stroke="rgba(0,0,0,.11)"/><path d="M262 62 L266 107" stroke="rgba(0,0,0,.11)"/>
+        <rect x="246" y="72" width="3.5" height="14" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+        <path d="M150 57 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
+        <rect x="329" y="74" width="9" height="8" rx="2" fill="#D8453C"/>
+        <circle cx="318" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="328" cy="111" r="3.4" fill="#C9CFD8"/>
+        <!-- 소프트탑 (레드 · 3세그먼트) -->
+        <g class="segGrp mv">
+          <path class="segF mv" d="M176 38 Q192 28 209 27 L210 39 Q193 40 181 45 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+          <path d="M209 27 Q229 27 243 35 L239 47 Q225 40 210 39 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+          <path d="M243 35 Q261 45 271 61 L258 62 Q252 52 239 47 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+          <path d="M244 40 Q256 48 261 57 L253 58 Q248 50 241 45 Z" fill="url(#glassG)" opacity=".85"/>
+          <path d="M226 28 L223 44" stroke="rgba(0,0,0,.18)"/>
+        </g>
+        <circle class="latchdot" cx="178" cy="34" r="4" fill="#FFE9A8"/>
+        <!-- 폴드 스택 / 토노 -->
+        <g class="stack mv">
+          <rect x="234" y="45" width="36" height="5" rx="2.5" fill="#A93640"/>
+          <rect x="238" y="50" width="32" height="5" rx="2.5" fill="#BE434D"/>
+          <rect x="242" y="55" width="28" height="4" rx="2" fill="#D2525C"/>
+        </g>
+        <rect class="tonneau mv" x="232" y="55" width="48" height="7" rx="3.5" fill="url(#bodyG)" stroke="rgba(0,0,0,.16)" stroke-width=".7"/>
+        <!-- 휠 -->
+        <g class="whl" data-x="98"></g><g class="whl" data-x="272"></g>
+        <!-- 잠금 -->
+        <g class="lockChip">
+          <rect x="166" y="4" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="176" y="12" width="8" height="6" rx="1.4" fill="#E08A80"/>
+          <path d="M177.5 12 v-2.4 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
+        </g>
+        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
+      </svg>
+
+      <!-- ═══ 리트랙터블 하드탑 ═══ -->
+      <svg id="carRht" viewBox="0 0 360 150">
+        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
+        <rect x="188" y="44" width="11" height="17" rx="4" fill="#262A34"/>
+        <rect x="212" y="44" width="11" height="17" rx="4" fill="#262A34"/>
+        <path class="win" d="M176 42 L228 42 L231 58 L174 58 Z" fill="url(#glassG)" opacity=".9"/>
+        <path d="M28 96 C26 86 34 80 48 77 L64 74 C98 67 128 63 142 62 L154 61 L240 61 C274 60 304 64 320 72 C332 78 338 85 338 93 L336 103 C335 108 330 110 322 110 L303 110 A28 28 0 0 0 245 110 L125 110 A28 28 0 0 0 67 110 L40 110 C30 110 27 104 28 96 Z"
+          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
+        <path d="M40 103 C120 107 260 107 330 101 L329 107 L42 107 Z" fill="rgba(0,0,0,.10)"/>
+        <path d="M158 61 L250 61 L254 67 L162 67 Z" fill="#1F222B"/>
+        <path d="M142 63 L166 34 L173 36 L150 64 Z" fill="#1A1D24"/>
+        <path d="M148 61 L168 37 L171 38 L153 62 Z" fill="url(#glassG)" opacity=".95"/>
+        <rect x="26" y="95" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
+        <path d="M38 76 C52 72 64 71 72 71 L72 76 C60 76 48 78 40 80 Z" fill="#F4E7C4" stroke="rgba(0,0,0,.14)"/>
+        <path d="M150 64 L146 107" stroke="rgba(0,0,0,.11)"/><path d="M240 63 L244 107" stroke="rgba(0,0,0,.11)"/>
+        <rect x="226" y="73" width="3.5" height="14" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+        <path d="M142 58 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
+        <rect x="329" y="76" width="9" height="8" rx="2" fill="#D8453C"/>
+        <circle cx="318" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="328" cy="111" r="3.4" fill="#C9CFD8"/>
+        <!-- 트렁크 수납 스택 (숨김) -->
+        <g class="trunkStack mv">
+          <rect x="272" y="66" width="42" height="5" rx="2.5" fill="#B9BFC9"/>
+          <rect x="276" y="71" width="36" height="4" rx="2" fill="#CDD3DB"/>
+        </g>
+        <!-- 하드 루프 (바디 컬러) -->
+        <g class="roofGrp mv">
+          <path class="roofPnl mv" d="M170 34 Q200 24 226 28 L226 40 Q200 36 172 40 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
+          <path class="rearGls mv" d="M226 28 Q248 34 262 48 L256 56 Q244 44 226 40 Z" fill="url(#glassG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
+        </g>
+        <!-- 데크 리드 (리버스 힌지) -->
+        <path class="trunkLid mv" d="M258 62 L330 64 C338 70 340 78 337 87 L258 73 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
+        <g class="whl" data-x="96"></g><g class="whl" data-x="274"></g>
+        <g class="lockChip">
+          <rect x="166" y="4" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="176" y="12" width="8" height="6" rx="1.4" fill="#E08A80"/>
+          <path d="M177.5 12 v-2.4 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
+        </g>
+        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
+      </svg>
+
+      <!-- ═══ 타르가 ═══ -->
+      <svg id="carTarga" viewBox="0 0 360 150">
+        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
+        <rect x="176" y="46" width="11" height="16" rx="4" fill="#262A34"/>
+        <rect x="196" y="46" width="11" height="16" rx="4" fill="#262A34"/>
+        <path class="win" d="M172 44 L214 44 L217 59 L170 59 Z" fill="url(#glassG)" opacity=".9"/>
+        <path d="M30 98 C28 88 36 82 50 79 L66 76 C98 69 126 65 140 64 L150 63 L200 62 C250 62 292 68 316 80 C330 87 336 93 336 99 L334 105 C333 109 328 110 321 110 L301 110 A28 28 0 0 0 243 110 L125 110 A28 28 0 0 0 67 110 L42 110 C32 110 29 105 30 98 Z"
+          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
+        <path d="M42 104 C120 108 260 108 326 102 L325 107 L44 107 Z" fill="rgba(0,0,0,.10)"/>
+        <path d="M156 63 L226 62 L230 68 L160 69 Z" fill="#1F222B"/>
+        <path d="M140 65 L162 36 L169 38 L148 66 Z" fill="#1A1D24"/>
+        <path d="M146 63 L164 39 L167 40 L151 64 Z" fill="url(#glassG)" opacity=".95"/>
+        <rect x="28" y="97" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
+        <circle cx="52" cy="80" r="6" fill="#F4E7C4" stroke="rgba(0,0,0,.16)"/>
+        <path d="M148 66 L144 107" stroke="rgba(0,0,0,.11)"/><path d="M226 64 L230 107" stroke="rgba(0,0,0,.11)"/>
+        <rect x="212" y="74" width="3.5" height="13" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
+        <path d="M140 60 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
+        <rect x="326" y="82" width="9" height="7" rx="2" fill="#D8453C"/>
+        <circle cx="316" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="326" cy="111" r="3.4" fill="#C9CFD8"/>
+        <!-- 타르가 바 (실버 · 고정) -->
+        <path d="M216 36 L228 36 L232 63 L212 63 Z" fill="#C9CFD8" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
+        <!-- 리어 글라스 캐노피 -->
+        <path class="canopy mv" d="M228 34 Q262 38 292 62 Q302 70 306 78 L294 80 Q280 62 252 48 Q240 42 228 42 Z"
+          fill="url(#glassG)" opacity=".92" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
+        <!-- 센터 타르가 패널 -->
+        <path class="tpanel mv" d="M166 38 Q190 32 216 34 L216 42 Q190 40 168 44 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.32)" stroke-width=".8"/>
+        <g class="whl" data-x="96"></g><g class="whl" data-x="272"></g>
+        <g class="lockChip">
+          <rect x="166" y="6" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="176" y="14" width="8" height="6" rx="1.4" fill="#E08A80"/>
+          <path d="M177.5 14 v-2.4 a2.5 2.5 0 0 1 5 0 V14" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
+        </g>
+        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
+      </svg>
+    </div>
+
+    <div class="stage-cap" id="stageCap"></div>
     <div class="road"></div>
   </div>
 
+  <!-- 차종 셀렉터 -->
+  <div class="selector" id="selector">
+    <button data-m="soft" class="on">소프트탑</button>
+    <button data-m="rht">하드탑</button>
+    <button data-m="targa">타르가</button>
+  </div>
+
   <div class="dash">
-    <div class="state" id="stLoading"><span class="blink px">▚▚</span><br><br>현 위치의 하늘을 읽는 중…</div>
+    <div class="state" id="stLoading"><span class="pulse"></span><br><br>현 위치의 하늘을 읽는 중…</div>
 
     <div class="state" id="stDenied" style="display:none">
       위치 권한이 꺼져 있어요.<br>도시를 선택하면 그 지역 기준으로 판정할게요.
@@ -141,27 +355,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretend
     </div>
 
     <div id="result" style="display:none">
-      <div class="verdict"><h1 class="px" id="vTitle"></h1><div class="bar"></div><p id="vSub"></p></div>
+      <div class="eyebrow">TODAY · OPEN-AIR VERDICT</div>
+      <div class="verdict"><h1 id="vTitle"></h1><p id="vSub"></p></div>
       <div class="updated" id="vTime"></div>
       <div class="alerts" id="alerts"></div>
 
       <div class="gauges">
-        <div class="g"><div class="lb">기온/체감</div><div class="vl px" id="gTemp">—</div><div class="st" id="gTempS"></div></div>
-        <div class="g"><div class="lb">자외선 UV</div><div class="vl px" id="gUv">—</div><div class="st" id="gUvS"></div></div>
-        <div class="g"><div class="lb">PM2.5</div><div class="vl px" id="gPm25">—</div><div class="st" id="gPm25S"></div></div>
-        <div class="g"><div class="lb">PM10</div><div class="vl px" id="gPm10">—</div><div class="st" id="gPm10S"></div></div>
-        <div class="g"><div class="lb">강수확률</div><div class="vl px" id="gRain">—</div><div class="st" id="gRainS"></div></div>
-        <div class="g"><div class="lb">바람</div><div class="vl px" id="gWind">—</div><div class="st" id="gWindS"></div></div>
+        <div class="g"><div class="lb">기온/체감</div><div class="vl" id="gTemp">—</div><div class="st" id="gTempS"></div></div>
+        <div class="g"><div class="lb">자외선 UV</div><div class="vl" id="gUv">—</div><div class="st" id="gUvS"></div></div>
+        <div class="g"><div class="lb">PM2.5</div><div class="vl" id="gPm25">—</div><div class="st" id="gPm25S"></div></div>
+        <div class="g"><div class="lb">PM10</div><div class="vl" id="gPm10">—</div><div class="st" id="gPm10S"></div></div>
+        <div class="g"><div class="lb">강수확률</div><div class="vl" id="gRain">—</div><div class="st" id="gRainS"></div></div>
+        <div class="g"><div class="lb">바람</div><div class="vl" id="gWind">—</div><div class="st" id="gWindS"></div></div>
       </div>
 
-      <div class="sec-t"><b>▶</b> TODAY 시간대별 뚜따 신호</div>
+      <div class="sec-t">시간대별 오픈에어링 신호</div>
       <div class="timeline" id="timeline"></div>
       <div class="legend">
-        <span><i style="background:var(--mint)"></i>OK</span>
-        <span><i style="background:var(--amber)"></i>주의</span>
-        <span><i style="background:var(--coral)"></i>클로즈드</span>
+        <span><i style="background:var(--good)"></i>좋음</span>
+        <span><i style="background:var(--warn)"></i>주의</span>
+        <span><i style="background:var(--bad)"></i>쉬는 시간</span>
       </div>
-      <div class="foot">차량을 탭하면 오픈 기믹 재생 · 기상청(KMA) 모델 · Open-Meteo</div>
+      <div class="foot">차량을 탭하면 오픈 기믹 재생 · 기상청(KMA) 모델 · OPEN-METEO</div>
     </div>
   </div>
 </div>
@@ -169,200 +384,103 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretend
 <script>
 const $=id=>document.getElementById(id);
 const CITIES=[["서울",37.5665,126.9780],["부산",35.1796,129.0756],["대구",35.8714,128.6014],["인천",37.4563,126.7052],["광주",35.1595,126.8526],["대전",36.3504,127.3845],["제주",33.4996,126.5312]];
-let verdictLevel=null, animTimer=null;
+let verdictLevel=null, animTimer=null, model='soft';
 
-/* ================= 350Z 로드스터 (화이트 바디 · 레드 탑) ================= */
-const cv=$('carCanvas'), ctx=cv.getContext('2d');
-function fitCanvas(){
-  const w=Math.min(window.innerWidth-28,470);
-  cv.style.width=w+'px'; cv.style.height=(w*64/160)+'px';
-}
-fitCanvas(); addEventListener('resize',fitCanvas);
+/* 휠 렌더 (공통 컴포넌트) */
+document.querySelectorAll('.whl').forEach(g=>{
+  const x=+g.dataset.x;
+  let spokes='';
+  for(let i=0;i<5;i++) spokes+=`<line x1="0" y1="0" x2="0" y2="-13" stroke="#8E96A4" stroke-width="3" transform="rotate(${i*72})"/>`;
+  g.innerHTML=`<g transform="translate(${x},110)">
+    <circle r="24" fill="#17191F"/>
+    <circle r="16" fill="#D7DCE4"/>
+    <g>${spokes}</g>
+    <circle r="4.5" fill="#C63B44"/><circle r="16" fill="none" stroke="#9AA1AF" stroke-width="1.5"/>
+  </g>`;
+});
 
-const C={
-  hi:'#FBFCFE', body:'#EDF0F4', mid:'#E2E6EC', low:'#C9CFD8', rocker:'#AEB5C0',
-  red:'#C63B44', redL:'#D9545C', redD:'#A32E37', redSeam:'#8E2731',
-  glass:'#A9DEEE', glassD:'#7CC0D6',
-  dark:'#1A1D26', cabin:'#232733', seat:'#2C303C',
-  tire:'#15171E', rim:'#CBD1DC', rimD:'#848C9C', chrome:'#DCE1E9',
-  lamp:'#FFE8B0', amberDot:'#F5A24E', tail:'#E04A3F',
-  shadow:'rgba(13,15,20,.4)', spark:'#FFF3C8', lockR:'#FF5A4E'
+/* ================= 차종별 오픈 기믹 시퀀스 ================= */
+const SVGS={soft:$('carSoft'),rht:$('carRht'),targa:$('carTarga')};
+const SEQS={
+  soft:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-latch',cap:'프론트 래치 해제',d:720},
+    {c:'s-f1',cap:'프론트 보우 폴딩',d:980},
+    {c:'s-f2',cap:'Z-폴드 진행',d:820},
+    {c:'s-stow',cap:'탑 웰 수납',d:760},
+    {c:'s-ton',cap:'토노 커버 클로즈',d:820},
+    {c:'s-done',cap:'오픈에어링 준비 완료',d:0},
+  ],
+  rht:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-deck',cap:'데크 리드 리버스 오픈',d:1050},
+    {c:'s-unlock',cap:'루프 언록 · 리어 글라스 틸트',d:820},
+    {c:'s-slide',cap:'루프 패널 트렁크 수납',d:1050},
+    {c:'s-close',cap:'데크 리드 클로즈',d:980},
+    {c:'s-done',cap:'오픈에어링 준비 완료',d:0},
+  ],
+  targa:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
+    {c:'s-lift',cap:'리어 캐노피 리프트',d:1050},
+    {c:'s-unlock',cap:'타르가 패널 언록',d:760},
+    {c:'s-slide',cap:'패널 후방 수납',d:980},
+    {c:'s-close',cap:'캐노피 클로즈',d:1000},
+    {c:'s-done',cap:'타르가 오픈 완료',d:0},
+  ],
 };
-function P(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w||1,h||1);}
-
-/* 350Z 실루엣: 롱 후드 + 리어 헌치 */
-function topY(x){
-  if(x<8)  return 38;                                  /* 범퍼 페이스 */
-  if(x<14) return 35;                                  /* 노즈 */
-  if(x<52) return Math.round(35-(x-14)*(5/38));        /* 롱 후드 35→30 */
-  if(x<64) return 30;                                  /* 카울 */
-  if(x<96) return 29;                                  /* 도어 벨트라인 */
-  if(x<104)return 28;
-  if(x<112)return 26;                                  /* 리어 헌치 상승 */
-  if(x<138)return 25;                                  /* 헌치~데크 */
-  if(x<146)return 27;
-  return 31;                                           /* 테일 */
+function resetCar(){
+  clearTimeout(animTimer);
+  Object.values(SVGS).forEach(s=>s.className.baseVal=s.classList.contains('active')?'active':'');
+  $('stageCap').textContent='';
 }
-function drawBody(){
-  P(12,60,132,3,C.shadow);                             /* 그림자 */
-  for(let x=6;x<152;x++){                              /* 화이트 보디 */
-    const t=topY(x);
-    P(x,t,1,54-t,C.body);
-    P(x,t,1,1,C.hi);
-    P(x,t+1,1,2,'#F5F7FA');
-  }
-  P(6,46,146,4,C.low);                                 /* 하부 셰이드 */
-  P(6,50,146,4,C.rocker);                              /* 록커 */
-  arch(38,52,14); arch(118,52,14);                     /* 휠 아치 */
-  /* 프론트 */
-  P(4,38,4,10,C.mid); P(4,44,4,4,C.low);
-  P(4,42,6,5,C.dark);                                  /* 범퍼 인테이크 */
-  P(10,34,14,3,C.lamp); P(10,34,5,1,'#FFF6DC');        /* 롱 헤드램프 */
-  P(24,35,2,2,C.low);
-  /* 펜더 길 벤트 (350Z 시그니처) */
-  P(50,33,5,2,C.dark); P(51,33,1,1,C.amberDot);
-  /* 도어 심 + 세로형 도어핸들 (350Z 시그니처) */
-  P(60,30,1,20,C.low); P(94,29,1,21,C.low);
-  P(89,29,2,7,C.chrome); P(89,29,1,7,'#F0F3F7');
-  /* 사이드 스커트 라인 */
-  P(58,48,40,1,'#BAC1CB');
-  /* 캐빈 개구부 */
-  P(64,26,44,4,C.cabin);
-  /* 시트 헤드레스트 */
-  P(72,21,5,5,C.seat); P(82,21,5,5,C.seat);
-  /* 미러 */
-  P(60,24,4,3,C.body); P(59,23,2,3,C.glassD);
-  /* 리어 */
-  P(146,28,6,4,C.tail); P(146,28,6,1,'#F0776B');       /* 테일램프 */
-  P(150,32,3,12,C.mid);
-  P(138,53,6,3,C.chrome); P(146,53,6,3,C.chrome);      /* 듀얼 머플러 */
-  /* 안테나 */
-  P(134,20,1,5,C.dark);
-  wheel(38,52); wheel(118,52);
-}
-function arch(cx,cy,r){
-  for(let y=-r;y<=0;y++)for(let x=-r;x<=r;x++)
-    if(x*x+y*y<=r*r) P(cx+x,cy+y,1,1,C.dark);
-}
-function wheel(cx,cy){
-  const r=11;
-  for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){
-    const d=x*x+y*y;
-    if(d<=r*r){
-      if(d>(r-3)*(r-3)) P(cx+x,cy+y,1,1,C.tire);
-      else if(d>12) P(cx+x,cy+y,1,1,(x===0||y===0||Math.abs(Math.abs(x)-Math.abs(y))<=1)?C.rim:C.rimD);
-      else P(cx+x,cy+y,1,1,C.red);                     /* 레드 센터캡 */
-    }
-  }
-}
-function hoop(x){ P(x,17,1,5,C.chrome); P(x+4,17,1,5,C.chrome); P(x,16,5,1,C.chrome); }
-function windshield(){
-  for(let i=0;i<15;i++){
-    const x=52+Math.round(i*0.75), y=30-i;
-    P(x,y,2,1,C.dark);
-    P(x+2,y,4,1,C.glass);
-  }
-  P(64,15,2,1,C.dark);                                 /* 헤더 */
-}
-function drawWindow(down){
-  const fullH=9, h=Math.round(fullH*(1-down));
-  if(h>0){ P(66,26-h,24,h,C.glassD); P(66,26-h,24,1,C.glass); }
-}
-/* 레드 소프트탑 곡선 */
-function capY(x){
-  if(x<72) return 15-(x>=66?1:0);
-  if(x<82) return 13;
-  if(x<108) return Math.round(13+((x-82)/26)*13);
-  return 26;
-}
-function drawTop(stage){
-  if(stage===0||stage===1){
-    const lift=(stage===1)?2:0;
-    for(let x=65;x<110;x++){
-      const y=capY(x)-(stage===1&&x<80?Math.round(lift*(80-x)/15):0);
-      P(x,y,1,27-y,C.red);
-      P(x,y,1,1,C.redL);
-      if((x-65)%9===0) P(x,y+1,1,26-y,C.redSeam);      /* 패브릭 심 */
-    }
-    P(96,18,8,5,C.glassD); P(96,18,8,1,C.glass);       /* 리어 글라스 */
-    if(stage===1) P(64,11,4,1,C.spark);
-  }
-  else if(stage===2){
-    for(let x=82;x<110;x++){const y=capY(x);P(x,y,1,27-y,C.red);P(x,y,1,1,C.redL);}
-    for(let i=0;i<12;i++) P(82-i,11+Math.round(i*0.6),2,3,C.redD);   /* 앞판 접힘 */
-    P(96,18,8,5,C.glassD);
-  }
-  else if(stage===3){
-    P(86,15,26,4,C.redD); P(89,19,23,4,C.red); P(92,23,20,3,C.redL); /* Z 스택 */
-    hoop(72); hoop(82);
-  }
-  else if(stage===4){
-    P(92,22,20,4,C.red); P(94,21,18,1,C.redL);          /* 수납 */
-    hoop(72); hoop(82);
-  }
-  else if(stage===5){
-    hoop(72); hoop(82);
-    P(90,25,24,3,C.body); P(90,25,24,1,C.hi);           /* 토노 커버 */
-    P(76,9,2,2,C.spark); P(108,12,2,2,C.spark); P(92,5,2,2,C.spark);
-  }
-}
-function drawLock(on){
-  P(72,2,16,11,'#12141B');
-  P(76,7,9,5,on?C.lockR:'#7E2B26');
-  P(77,3,1,4,on?C.lockR:'#7E2B26'); P(83,3,1,4,on?C.lockR:'#7E2B26');
-  P(77,3,7,1,on?C.lockR:'#7E2B26');
-}
-function renderCar(stage,winDown,lock,blink){
-  ctx.clearRect(0,0,160,64);
-  drawBody();
-  windshield();
-  drawWindow(winDown);
-  drawTop(stage);
-  if(lock) drawLock(blink);
-}
-renderCar(0,0,false,false);
-
-const SEQ=[
-  {s:0,w:0,  cap:'',d:500},
-  {s:0,w:.5, cap:'윈도우 다운…',d:380},
-  {s:0,w:1,  cap:'윈도우 다운…',d:380},
-  {s:1,w:1,  cap:'프론트 래치 해제!',d:520},
-  {s:2,w:1,  cap:'탑 Z-폴딩…',d:480},
-  {s:3,w:1,  cap:'탑 폴딩…',d:480},
-  {s:4,w:1,  cap:'탑 수납…',d:440},
-  {s:5,w:1,  cap:'토노 커버 클로즈 — 뚜따 완료!',d:0},
-];
 function playOpen(){
-  clearTimeout(animTimer); let i=0;
+  resetCar();
+  const svg=SVGS[model], seq=SEQS[model];
+  let i=0;
   (function step(){
-    const f=SEQ[i];
-    renderCar(f.s,f.w,false,false);
+    const f=seq[i];
+    svg.classList.add(f.c);
     $('stageCap').textContent=f.cap;
-    if(++i<SEQ.length) animTimer=setTimeout(step,f.d);
-    else setTimeout(()=>$('stageCap').textContent='',2600);
+    if(++i<seq.length) animTimer=setTimeout(step,f.d);
+    else setTimeout(()=>$('stageCap').textContent='',3000);
   })();
 }
 function playLocked(){
-  clearTimeout(animTimer); let n=0;
-  $('stageCap').textContent='탑 록 유지 — 오늘은 클로즈드';
-  (function bl(){renderCar(0,0,true,n%2===0);if(++n<8)animTimer=setTimeout(bl,320);})();
+  resetCar();
+  SVGS[model].classList.add('s-lock');
+  $('stageCap').textContent='탑 록 유지 — 오늘은 쉬는 날';
 }
-cv.addEventListener('click',()=>{
-  if(verdictLevel==='bad'){cv.classList.remove('shake');void cv.offsetWidth;cv.classList.add('shake');playLocked();return;}
+$('carBox').addEventListener('click',()=>{
+  if(verdictLevel==='bad'){
+    const b=$('carBox');b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');
+    playLocked();return;
+  }
   if(verdictLevel) playOpen();
+});
+/* 차종 셀렉터 */
+$('selector').addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn)return;
+  document.querySelectorAll('#selector button').forEach(b=>b.classList.toggle('on',b===btn));
+  model=btn.dataset.m;
+  Object.entries(SVGS).forEach(([k,s])=>s.classList.toggle('active',k===model));
+  resetCar();
+  if(verdictLevel==='bad') playLocked();
+  else if(verdictLevel) setTimeout(playOpen,250);
 });
 
 /* 구름/비 */
 (function(){
   const r=$('rain');
-  for(let i=0;i<22;i++){const d=document.createElement('div');d.className='pxdrop';
-    d.style.left=(Math.random()*100)+'%';d.style.animationDelay=(Math.random()*0.8)+'s';
-    d.style.animationDuration=(0.6+Math.random()*0.5)+'s';r.appendChild(d);}
+  for(let i=0;i<26;i++){const d=document.createElement('div');d.className='streak';
+    d.style.left=(Math.random()*100)+'%';d.style.animationDelay=(Math.random()*0.75)+'s';
+    d.style.animationDuration=(0.55+Math.random()*0.45)+'s';r.appendChild(d);}
   const sky=$('sky');
-  [[60,48,34],[210,88,48],[-30,128,62]].forEach(([l,t,dur])=>{
-    const c=document.createElement('div');c.className='pxcloud';
-    c.style.cssText=`left:${l}px;top:${t}px;animation-duration:${dur}s`;
-    c.innerHTML='<i style="left:6px;top:0;width:28px;height:7px"></i><i style="left:0;top:7px;width:48px;height:7px"></i><i style="left:14px;top:-7px;width:14px;height:7px"></i>';
+  [[40,52,110,26,40],[200,96,150,32,58],[-60,140,120,24,74]].forEach(([l,t,w,h,dur])=>{
+    const c=document.createElement('div');c.className='cl';
+    c.style.cssText=`left:${l}px;top:${t}px;width:${w}px;height:${h}px;animation-duration:${dur}s`;
     sky.appendChild(c);});
 })();
 
@@ -450,24 +568,24 @@ function render(w,a){
   const rainingNow=isRainCode(cur.weather_code)||cur.precipitation>0;
 
   const bads=[],warns=[],goods=[];
-  if(rainingNow) bads.push(['🌧','지금 비가 내리고 있어요. 탑 록 유지!']);
-  else if(maxProb>=60) bads.push(['🌧',`강수확률 최대 ${maxProb}%. ${rainSoonH?rainSoonH+'시경 비 가능성 — ':''}뚜따는 다음 기회에.`]);
-  else if(maxProb>=30) warns.push(['☔',`강수확률 ${maxProb}% — 짧은 코스 위주, 하늘 어두워지면 즉시 클로즈.`]);
+  if(rainingNow) bads.push(['🌧','지금 비가 내리고 있어요. 탑은 그대로 두세요.']);
+  else if(maxProb>=60) bads.push(['🌧',`강수확률 최대 ${maxProb}%. ${rainSoonH?rainSoonH+'시경 비 가능성 — ':''}오픈에어링은 다음 기회에.`]);
+  else if(maxProb>=30) warns.push(['☔',`강수확률 ${maxProb}% — 짧은 코스 위주, 하늘이 어두워지면 바로 클로즈.`]);
   if(pmWorst>=3) bads.push(['😷',`미세먼지 매우나쁨 (PM2.5 ${Math.round(air.pm2_5)}·PM10 ${Math.round(air.pm10)}). 오픈 시 호흡기 직접 노출.`]);
   else if(pmWorst===2) warns.push(['😷','미세먼지 나쁨 — 장거리 오픈은 피하고 정체 구간에선 클로즈 권장.']);
   if(wind>=40) bads.push(['💨',`강풍 ${Math.round(wind)}km/h — 고속 버피팅 위험.`]);
-  else if(wind>=25) warns.push(['💨',`바람 다소 강함 (${Math.round(wind)}km/h). 윈드 디플렉터+창문 업 추천.`]);
+  else if(wind>=25) warns.push(['💨',`바람 다소 강함 (${Math.round(wind)}km/h). 윈드 디플렉터와 창문 업 추천.`]);
   if(feel<=0) bads.push(['🥶',`체감 ${Math.round(feel)}°C — 오픈 주행엔 너무 추워요.`]);
-  else if(feel<8) warns.push(['🧣',`체감 ${Math.round(feel)}°C 쌀쌀 — 시트히터·목토시 준비하면 뚜따 가능!`]);
-  if(uv>=8) warns.push(['🕶','자외선 매우 강함 — 썬크림·선글라스·모자 필수. 맨살 노출 주의!']);
-  else if(uv>=6) warns.push(['☀','햇빛 강한 날 — 썬크림 바르고 출발하세요.']);
-  if(temp>=33) warns.push(['🥵',`기온 ${Math.round(temp)}°C — 오픈 시 에어컨 무력화. 정체 구간 열사병 주의, 물 챙기기.`]);
-  else if(temp>=30) warns.push(['🌡',`기온 ${Math.round(temp)}°C — 한낮보단 아침·저녁 뚜따 추천.`]);
+  else if(feel<8) warns.push(['🧣',`체감 ${Math.round(feel)}°C 쌀쌀 — 시트히터와 목토시가 있다면 충분해요.`]);
+  if(uv>=8) warns.push(['🕶','자외선 매우 강함 — 썬크림·선글라스·모자 없이는 짧은 주행도 무리예요.']);
+  else if(uv>=6) warns.push(['☀','햇빛이 강한 날 — 썬크림 바르고 출발하세요.']);
+  if(temp>=33) warns.push(['🥵',`기온 ${Math.round(temp)}°C — 오픈 시 에어컨 무력화. 정체 구간 열사병 주의, 물을 챙기세요.`]);
+  else if(temp>=30) warns.push(['🌡',`기온 ${Math.round(temp)}°C — 한낮보다는 아침·저녁의 오픈에어링을 추천해요.`]);
 
   let level;
   if(bads.length)level='bad';
   else if(warns.length)level='warn';
-  else{level='good';goods.push(['🏁','비·미세먼지·바람 올 클리어. 완벽한 뚜따 데이!']);}
+  else{level='good';goods.push(['🏁','비·미세먼지·바람 모두 완벽. 하늘이 허락한 하루입니다.']);}
   verdictLevel=level;
 
   const sky=$('sky');
@@ -476,10 +594,10 @@ function render(w,a){
   if(level==='bad')sky.classList.add('theme-bad');
   $('rain').classList.toggle('on',rainingNow);
 
-  const V={good:['뚜따 OK!','지붕 열고 달리기 좋은 날'],
-           warn:['조건부 뚜따','주의사항만 지키면 오픈 가능'],
-           bad:['뚜따 금지','오늘은 탑 록 유지']}[level];
-  $('vTitle').textContent=V[0];$('vTitle').className='px v-'+level;
+  const V={good:['오픈에어링하기 좋은 날','하늘이 허락한 드라이브'],
+           warn:['오픈에어링 할 수 있는 날','몇 가지만 챙기면 충분해요'],
+           bad:['오픈에어링 쉬는 날','오늘은 탑을 아껴 두세요']}[level];
+  $('vTitle').textContent=V[0];$('vTitle').className='v-'+level;
   $('vSub').textContent=V[1];
   $('vTime').textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})
     +' '+String(nowH).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+' 기준 · KMA 모델';
@@ -489,7 +607,7 @@ function render(w,a){
     .forEach(([cl,ic,tx])=>{const d=document.createElement('div');d.className='alert '+cl;
       d.innerHTML=`<span class="ic">${ic}</span><span>${tx}</span>`;al.appendChild(d);});
 
-  setG('gTemp',`${Math.round(temp)}°/${Math.round(feel)}°`, temp>=33||feel<=0?'ng':temp>=30||feel<8?'mid':'ok', temp>=30?'더움':feel<8?'쌀쌀':'적당');
+  setG('gTemp',`${Math.round(temp)}° / ${Math.round(feel)}°`, temp>=33||feel<=0?'ng':temp>=30||feel<8?'mid':'ok', temp>=30?'더움':feel<8?'쌀쌀':'적당');
   setG('gUv',(+uv).toFixed(1), uv>=8?'ng':uv>=6?'mid':'ok', uv>=8?'매우강함':uv>=6?'강함':uv>=3?'보통':'낮음');
   setG('gPm25',Math.round(air.pm2_5), g25>=2?'ng':g25===1?'mid':'ok', PM_TXT[g25]);
   setG('gPm10',Math.round(air.pm10), g10>=2?'ng':g10===1?'mid':'ok', PM_TXT[g10]);
@@ -512,7 +630,7 @@ function render(w,a){
   $('stLoading').style.display='none';$('stError').style.display='none';
   $('result').style.display='block';
 
-  setTimeout(()=>{ level==='bad'?playLocked():playOpen(); },500);
+  setTimeout(()=>{ level==='bad'?playLocked():playOpen(); },600);
   const nowEl=tl.querySelector('.hr.now');
   if(nowEl)nowEl.scrollIntoView({inline:'center',block:'nearest'});
 }
