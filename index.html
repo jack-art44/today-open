@@ -7,100 +7,102 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="오픈에어">
-<meta name="theme-color" content="#0C0D10">
-<link rel="manifest" href='data:application/manifest+json,{"name":"오픈에어링 판정","short_name":"오픈에어","display":"standalone","background_color":"%230C0D10","theme_color":"%230C0D10","start_url":"."}'>
+<meta name="theme-color" content="#0B0C10">
+<link rel="manifest" href='data:application/manifest+json,{"name":"오픈에어링 판정","short_name":"오픈에어","display":"standalone","background_color":"%230B0C10","theme_color":"%230B0C10","start_url":"."}'>
 <style>
 :root{
-  --bg:#0C0D10; --ink:#F5F6F8; --sub:#9AA0AC; --faint:#5B616D;
-  --glass:rgba(255,255,255,.055); --glass-b:rgba(255,255,255,.11);
-  --good:#7BD8A8; --warn:#E8C177; --bad:#E08A80; --gold:#C9A96A; --ice:#8FC9DE;
+  --bg:#0B0C10; --ink:#F5F6F8; --sub:#9AA0AC; --faint:#5B616D;
+  --good:#7BD8A8; --warn:#E8C177; --bad:#E08A80; --gold:#C9A96A;
+  --spring:cubic-bezier(.34,1.25,.4,1);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Apple SD Gothic Neo',sans-serif;
-  background:var(--bg);color:var(--ink);min-height:100vh;font-weight:400}
+  background:var(--bg);color:var(--ink);min-height:100vh}
 .wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.glass{position:relative;background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 32px rgba(0,0,0,.32);
+  backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%)}
 
-/* ================= HERO ================= */
-.sky{position:relative;height:352px;overflow:hidden;
-  background:linear-gradient(180deg,#7DB8DE 0%,#A9CFE8 42%,#E9E2D2 78%,#F3E3C2 100%);
-  transition:background 1.2s ease}
+.sky{position:relative;height:368px;overflow:hidden;
+  background:linear-gradient(180deg,#7DB8DE 0%,#A9CFE8 42%,#E9E2D2 78%,#F3E3C2 100%);transition:background 1.2s ease}
 .sky.theme-warn{background:linear-gradient(180deg,#C0A26C 0%,#D9C298 42%,#EEDFC2 78%,#F6EDD8 100%)}
 .sky.theme-bad{background:linear-gradient(180deg,#535E6A 0%,#75818E 42%,#9AA6B0 78%,#B9C3CB 100%)}
-.sunGlow{position:absolute;top:-40px;right:-10px;width:220px;height:220px;border-radius:50%;
+.sunGlow{position:absolute;top:-46px;right:-14px;width:230px;height:230px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,236,190,.95) 0%,rgba(255,225,160,.35) 42%,transparent 70%);
   filter:blur(2px);transition:opacity 1s}
 .sky.theme-bad .sunGlow{opacity:.1}
-.cl{position:absolute;background:rgba(255,255,255,.55);border-radius:999px;filter:blur(10px);
-  animation:drift linear infinite}
-.sky.theme-bad .cl{background:rgba(235,240,244,.5)}
-@keyframes drift{from{transform:translateX(-220px)}to{transform:translateX(680px)}}
+.cl{position:absolute;background:rgba(255,255,255,.5);border-radius:999px;filter:blur(11px);animation:drift linear infinite}
+.sky.theme-bad .cl{background:rgba(235,240,244,.48)}
+@keyframes drift{from{transform:translateX(-240px)}to{transform:translateX(700px)}}
 .rain{position:absolute;inset:0;display:none;pointer-events:none}
 .sky.theme-bad .rain.on{display:block}
 .streak{position:absolute;top:-30px;width:1.5px;height:22px;border-radius:1px;
   background:linear-gradient(180deg,transparent,rgba(90,110,130,.55));animation:fall .75s linear infinite}
-@keyframes fall{to{transform:translateY(400px)}}
-.road{position:absolute;left:0;right:0;bottom:0;height:44px;background:#17181D}
-.road::before{content:"";position:absolute;top:19px;left:0;right:0;height:2px;
-  background:repeating-linear-gradient(90deg,rgba(201,169,106,.55) 0 26px,transparent 26px 62px)}
-.chip{position:absolute;z-index:6;display:flex;align-items:center;gap:7px;
-  background:rgba(14,15,20,.42);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,.16);color:#fff;font-size:12.5px;
-  padding:8px 13px;border-radius:99px;font-family:inherit;cursor:pointer}
+@keyframes fall{to{transform:translateY(420px)}}
+.road{position:absolute;left:0;right:0;bottom:0;height:40px;background:#15161B}
+.road::before{content:"";position:absolute;top:17px;left:0;right:0;height:2px;
+  background:repeating-linear-gradient(90deg,rgba(201,169,106,.5) 0 26px,transparent 26px 64px)}
+.chip{position:absolute;z-index:6;display:flex;align-items:center;gap:7px;border-radius:99px;
+  color:#fff;font-size:12.5px;padding:8px 13px;font-family:inherit;cursor:pointer;
+  background:rgba(14,15,20,.4);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
 .chip .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
 #locBtn{top:14px;left:14px}
 #gpsBadge{top:14px;right:14px;color:#C6CCD6;font-size:11px;cursor:default}
 #gpsBadge.ok{color:var(--good)}
-#carBox{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(94vw,480px);cursor:pointer}
+#carBox{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:min(97vw,520px);cursor:pointer}
 #carBox.shake{animation:shk .45s}
 @keyframes shk{0%,100%{transform:translateX(-50%)}22%{transform:translateX(calc(-50% - 5px))}66%{transform:translateX(calc(-50% + 5px))}}
 #carBox svg{width:100%;height:auto;display:none}
 #carBox svg.active{display:block}
-.stage-cap{position:absolute;left:0;right:0;bottom:50px;text-align:center;font-size:12px;
-  letter-spacing:.12em;color:rgba(20,24,32,.72);font-weight:500;transition:opacity .4s}
-.sky.theme-bad .stage-cap{color:rgba(245,246,248,.85)}
+.cap-pill{position:absolute;left:50%;top:64px;transform:translateX(-50%);z-index:7;
+  display:none;align-items:center;gap:10px;padding:9px 15px 12px;border-radius:99px;min-width:220px;
+  background:rgba(12,13,17,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.cap-pill.on{display:flex}
+.cap-pill .num{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.08em}
+.cap-pill .txt{font-size:12.5px;color:#F0F1F4;font-weight:500;white-space:nowrap}
+.cap-pill .prog{position:absolute;left:16px;right:16px;bottom:5px;height:2px;border-radius:1px;background:rgba(255,255,255,.14);overflow:hidden}
+.cap-pill .prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .6s ease}
 
-/* 차종 셀렉터 */
-.selector{position:relative;z-index:8;display:flex;gap:4px;width:fit-content;margin:-21px auto 0;
-  background:rgba(18,19,24,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:4px}
-.selector button{border:none;background:transparent;color:var(--sub);font-family:inherit;
-  font-size:12.5px;padding:8px 16px;border-radius:99px;cursor:pointer;transition:all .25s;white-space:nowrap}
-.selector button.on{background:rgba(255,255,255,.12);color:var(--ink)}
+.selector{position:relative;z-index:8;display:flex;width:fit-content;margin:-23px auto 0;border-radius:99px;padding:4px;gap:2px}
+.selector .thumb{position:absolute;top:4px;left:0;height:calc(100% - 8px);border-radius:99px;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.08));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);transition:transform .5s var(--spring),width .5s var(--spring)}
+.selector button{position:relative;z-index:1;border:none;background:transparent;color:var(--sub);
+  font-family:inherit;font-size:12px;padding:9px 13px;border-radius:99px;cursor:pointer;transition:color .3s;white-space:nowrap;font-weight:500}
+.selector button.on{color:var(--ink)}
+.mech-tag{text-align:center;font-size:10.5px;color:var(--faint);letter-spacing:.1em;margin-top:10px}
 
-/* ================= DASH ================= */
-.dash{flex:1;padding:30px 18px calc(32px + env(safe-area-inset-bottom))}
-.eyebrow{text-align:center;font-size:10.5px;letter-spacing:.32em;color:var(--gold);margin-bottom:12px;font-weight:500}
+.dash{flex:1;padding:26px 18px calc(32px + env(safe-area-inset-bottom))}
+.reveal{animation:up .7s var(--spring) both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.eyebrow{text-align:center;font-size:10.5px;letter-spacing:.34em;color:var(--gold);margin-bottom:12px;font-weight:500}
 .verdict{text-align:center}
-.verdict h1{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.35}
+.verdict h1{font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.3}
 .verdict h1.v-good{color:var(--good)}
 .verdict h1.v-warn{color:var(--warn)}
 .verdict h1.v-bad{color:var(--bad)}
 .verdict p{color:var(--sub);font-size:13.5px;margin-top:8px;font-weight:300}
 .updated{text-align:center;color:var(--faint);font-size:11px;margin:12px 0 24px;font-weight:300}
-
-.alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
-.alert{display:flex;gap:11px;align-items:flex-start;padding:13px 15px;font-size:13px;line-height:1.6;
-  background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#D5D9E0;font-weight:300}
+.alerts{display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.alert{display:flex;gap:11px;align-items:flex-start;padding:14px 16px;font-size:13px;line-height:1.6;border-radius:20px;color:#D5D9E0;font-weight:300}
 .alert .ic{font-size:15px;line-height:1.5}
-.alert.a-bad{border-color:rgba(224,138,128,.3)}
-.alert.a-warn{border-color:rgba(232,193,119,.28)}
-.alert.a-good{border-color:rgba(123,216,168,.28)}
-
-.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:26px}
-.g{background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;padding:13px 8px;text-align:center;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.alert.a-bad{border-color:rgba(224,138,128,.32)}
+.alert.a-warn{border-color:rgba(232,193,119,.3)}
+.alert.a-good{border-color:rgba(123,216,168,.3)}
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:26px}
+.g{border-radius:20px;padding:14px 8px;text-align:center}
 .g .lb{font-size:10px;color:var(--sub);margin-bottom:7px;letter-spacing:.08em;font-weight:500}
-.g .vl{font-size:18px;font-weight:200;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.g .st{font-size:11px;margin-top:5px;font-weight:400}
+.g .vl{font-size:18px;font-weight:250;font-variant-numeric:tabular-nums}
+.g .st{font-size:11px;margin-top:5px}
 .st.ok{color:var(--good)}.st.mid{color:var(--warn)}.st.ng{color:var(--bad)}
-
 .sec-t{font-size:10.5px;color:var(--sub);letter-spacing:.28em;margin-bottom:12px;font-weight:500}
 .sec-t::before{content:"— ";color:var(--gold)}
 .timeline{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:10px;scrollbar-width:none}
 .timeline::-webkit-scrollbar{display:none}
-.hr{flex:0 0 47px;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:9px 4px;text-align:center;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.hr{flex:0 0 48px;border-radius:16px;padding:10px 4px;text-align:center}
 .hr.now{border-color:rgba(201,169,106,.55)}
 .hr .h{font-size:10px;color:var(--sub);font-weight:300}
 .hr .e{font-size:14px;margin:4px 0}
@@ -108,270 +110,387 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Apple SD Gothic 
 .d.ok{background:var(--good)}.d.mid{background:var(--warn)}.d.ng{background:var(--bad)}
 .legend{display:flex;gap:18px;justify-content:center;font-size:11px;color:var(--sub);font-weight:300}
 .legend i{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
-
 .state{padding:56px 20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.9;font-weight:300}
-.state button,.citybtns button{margin-top:14px;background:var(--glass);border:1px solid var(--glass-b);
-  color:var(--ink);font-family:inherit;font-size:13px;padding:10px 20px;border-radius:99px;cursor:pointer;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.state button,.citybtns button{margin-top:14px;color:var(--ink);font-family:inherit;font-size:13px;padding:10px 20px;border-radius:99px;cursor:pointer}
 .citybtns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
 .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pl 1.2s ease infinite}
 @keyframes pl{50%{opacity:.2}}
 .foot{text-align:center;color:var(--faint);font-size:10.5px;margin-top:20px;line-height:1.8;font-weight:300;letter-spacing:.04em}
 
-/* ================= 차량 공통 & 기믹 ================= */
-.mv{transition:transform 1s cubic-bezier(.6,0,.28,1),opacity .7s ease}
-svg .win{transition:transform .8s cubic-bezier(.5,0,.4,1),opacity .8s}
-@media (prefers-reduced-motion: reduce){.mv,svg .win,.cl,.streak{transition:none;animation:none}}
-
-/* ---- 소프트탑 시퀀스 ---- */
-#carSoft .segF{transform-box:fill-box;transform-origin:100% 100%}
-#carSoft .stack{opacity:0;transform:translateY(-10px)}
-#carSoft .tonneau{opacity:0}
-#carSoft .latchdot{opacity:0}
-#carSoft.s-w1 .win{transform:translateY(9px)}
-#carSoft.s-w2 .win{transform:translateY(17px);opacity:.12}
-#carSoft.s-latch .segF{transform:translateY(-3px) rotate(-6deg)}
-#carSoft.s-latch .latchdot{opacity:1;animation:lp .5s ease 2}
-@keyframes lp{50%{opacity:.15}}
-#carSoft.s-f1 .segF{transform:rotate(-126deg)}
-#carSoft.s-f2 .segGrp{opacity:0}
-#carSoft.s-f2 .stack{opacity:1;transform:none}
-#carSoft.s-stow .stack{transform:translateY(8px) scale(.9)}
-#carSoft.s-ton .stack{opacity:0}
-#carSoft.s-ton .tonneau{opacity:1}
-
-/* ---- 하드탑(RHT) 시퀀스 ---- */
-#carRht .trunkLid{transform-box:fill-box;transform-origin:96% 60%}
-#carRht .rearGls{transform-box:fill-box;transform-origin:0% 100%}
-#carRht .trunkStack{opacity:0}
-#carRht.s-w1 .win{transform:translateY(9px)}
-#carRht.s-w2 .win{transform:translateY(17px);opacity:.12}
-#carRht.s-deck .trunkLid{transform:rotate(-44deg)}
-#carRht.s-unlock .rearGls{transform:rotate(16deg)}
-#carRht.s-unlock .roofPnl{transform:translateY(-3px)}
-#carRht.s-slide .roofGrp{transform:translate(58px,28px) rotate(11deg) scale(.8);opacity:0}
-#carRht.s-slide .trunkStack{opacity:1}
-#carRht.s-close .trunkLid{transform:rotate(0)}
-#carRht.s-close .trunkStack{opacity:0}
-
-/* ---- 타르가 시퀀스 ---- */
-#carTarga .canopy{transform-box:fill-box;transform-origin:80% 100%}
-#carTarga .tpanel{transform-box:fill-box;transform-origin:50% 50%}
-#carTarga.s-w1 .win{transform:translateY(8px)}
-#carTarga.s-w2 .win{transform:translateY(15px);opacity:.12}
-#carTarga.s-lift .canopy{transform:translate(5px,-26px) rotate(6deg)}
-#carTarga.s-unlock .tpanel{transform:translateY(-5px) rotate(-5deg)}
-#carTarga.s-slide .tpanel{transform:translate(64px,14px) scale(.85);opacity:0}
-#carTarga.s-close .canopy{transform:none}
-
-/* 공통: 잠금/샤인 */
+/* ═══ 기믹 공통 ═══ */
+.mvS{transition:transform .85s cubic-bezier(.5,0,.2,1),opacity .6s}
+.mvM{transition:transform 1.15s cubic-bezier(.55,0,.18,1),opacity .8s}
+.mvH{transition:transform 1.55s cubic-bezier(.6,.02,.12,1),opacity .9s}
+svg .win{transition:transform .9s cubic-bezier(.5,0,.4,1),opacity .9s}
 svg .lockChip{opacity:0;transition:opacity .5s}
 svg.s-lock .lockChip{opacity:1}
 svg.s-lock .lockGlyph{animation:lockPulse 1s ease 3}
 @keyframes lockPulse{50%{opacity:.35}}
 svg .shine{opacity:0}
-svg.s-done .shine{opacity:1;animation:sweep 1.4s ease forwards}
-@keyframes sweep{from{transform:translateX(-160px)}to{transform:translateX(360px)}}
+svg.s-done .shine{opacity:1;animation:sweep 1.6s ease forwards}
+@keyframes sweep{from{transform:translateX(-220px) skewX(-18deg)}to{transform:translateX(620px) skewX(-18deg)}}
+svg.settle{animation:settle 1s ease}
+@keyframes settle{0%,100%{transform:none}42%{transform:translateY(2px)}}
+@media (prefers-reduced-motion: reduce){.mvS,.mvM,.mvH,svg .win,.cl,.streak{transition:none;animation:none}}
+
+/* 350Z */
+#zcar .segF{transform-box:fill-box;transform-origin:100% 100%}
+#zcar .tonLid{transform-box:fill-box;transform-origin:96% 50%}
+#zcar .stack{opacity:0;transform:translateY(-14px)}
+#zcar .latchdot{opacity:0}
+#zcar.s-w1 .win{transform:translateY(12px)}
+#zcar.s-w2 .win{transform:translateY(24px);opacity:.08}
+#zcar.s-latch .segF{transform:translateY(-4px) rotate(-6deg)}
+#zcar.s-latch .latchdot{opacity:1;animation:lp .5s ease 2}
+@keyframes lp{50%{opacity:.15}}
+#zcar.s-ton .tonLid{transform:rotate(-33deg)}
+#zcar.s-f1 .segF{transform:rotate(-125deg)}
+#zcar.s-f2 .segGrp{opacity:0}
+#zcar.s-f2 .stack{opacity:1;transform:none}
+#zcar.s-tc .stack{transform:translateY(7px) scale(.96)}
+#zcar.s-tc .tonLid{transform:rotate(0);transition-delay:.35s}
+
+/* Z4 E89 */
+#z4car .trunkLid{transform-box:fill-box;transform-origin:96% 60%}
+#z4car .roofFront{transform-box:fill-box;transform-origin:50% 60%}
+#z4car .trunkStack{opacity:0}
+#z4car.s-w1 .win{transform:translateY(12px)}
+#z4car.s-w2 .win{transform:translateY(23px);opacity:.08}
+#z4car.s-deck .trunkLid{transform:rotate(-38deg)}
+#z4car.s-lift .roofFront{transform:translate(6px,-16px) rotate(5deg)}
+#z4car.s-stk .roofFront{transform:translate(46px,-6px) rotate(12deg)}
+#z4car.s-drop .roofGrp{transform:translate(70px,46px) rotate(15deg) scale(.68);opacity:0}
+#z4car.s-drop .trunkStack{opacity:1;transition-delay:.75s}
+#z4car.s-cls .trunkLid{transform:rotate(0)}
+#z4car.s-cls .trunkStack{opacity:0}
+
+/* F33 */
+#f33car .trunkLid{transform-box:fill-box;transform-origin:96% 60%}
+#f33car .rp1,#f33car .rp2,#f33car .rp3{transform-box:fill-box}
+#f33car .rp3{transform-origin:0% 100%}
+#f33car .stack{opacity:0}
+#f33car.s-w1 .win{transform:translateY(12px)}
+#f33car.s-w2 .win{transform:translateY(23px);opacity:.08}
+#f33car.s-deck .trunkLid{transform:rotate(-37deg)}
+#f33car.s-unl .rp1{transform:translateY(-5px)}
+#f33car.s-unl .rp2{transform:translateY(-3px);transition-delay:.12s}
+#f33car.s-unl .rp3{transform:rotate(4deg);transition-delay:.24s}
+#f33car.s-fd1 .rp1{transform:translate(44px,-10px) rotate(14deg)}
+#f33car.s-fd2 .rp2{transform:translate(24px,2px) rotate(7deg)}
+#f33car.s-fd2 .rp1{transform:translate(64px,-2px) rotate(18deg)}
+#f33car.s-fd2 .rp3{transform:rotate(46deg)}
+#f33car.s-drop .roofGrp{transform:translate(60px,50px) rotate(12deg) scale(.64);opacity:0}
+#f33car.s-drop .stack{opacity:1;transition-delay:.75s}
+#f33car.s-cls .trunkLid{transform:rotate(0)}
+#f33car.s-cls .stack{opacity:0}
+
+/* 911 Targa */
+#p911 .canopy{transform-box:fill-box;transform-origin:86% 100%}
+#p911 .roofPanel{transform-box:fill-box;transform-origin:50% 50%}
+#p911 .panelStack{opacity:0}
+#p911.s-w1 .win{transform:translateY(10px)}
+#p911.s-w2 .win{transform:translateY(20px);opacity:.08}
+#p911.s-lift .canopy{transform:translate(18px,-46px) rotate(15deg)}
+#p911.s-rel .roofPanel{transform:translateY(-8px) rotate(-3deg)}
+#p911.s-fold .roofPanel{transform:translate(74px,22px) rotate(-165deg) scale(.85,.6);opacity:0}
+#p911.s-fold .panelStack{opacity:1;transition-delay:.78s}
+#p911.s-cls .canopy{transform:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FEFEFF"/><stop offset=".38" stop-color="#EDF0F4"/>
+        <stop offset=".72" stop-color="#D2D8E0"/><stop offset="1" stop-color="#AEB6C2"/>
+      </linearGradient>
+      <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#D8555F"/><stop offset=".6" stop-color="#B93B46"/><stop offset="1" stop-color="#932B35"/>
+      </linearGradient>
+      <linearGradient id="gGlass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#DFF3F9"/><stop offset=".5" stop-color="#A8D6E6"/><stop offset="1" stop-color="#6FA8BF"/>
+      </linearGradient>
+      <linearGradient id="gSilver" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F7F9FB"/><stop offset=".38" stop-color="#DFE4EA"/>
+        <stop offset=".72" stop-color="#BFC7D1"/><stop offset="1" stop-color="#98A1AE"/>
+      </linearGradient>
+      <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E4E8EE"/><stop offset="1" stop-color="#A6ADBA"/>
+      </linearGradient>
+      <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#4A7CC4"/><stop offset=".45" stop-color="#2F5AA0"/>
+        <stop offset=".78" stop-color="#1F4076"/><stop offset="1" stop-color="#152C52"/>
+      </linearGradient>
+      <linearGradient id="gGrey" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#EDF0F3"/><stop offset=".4" stop-color="#CBD1D8"/>
+        <stop offset=".75" stop-color="#A4ACB7"/><stop offset="1" stop-color="#7E8794"/>
+      </linearGradient>
+      <linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3A3D46"/><stop offset="1" stop-color="#1B1E25"/>
+      </linearGradient>
+      <linearGradient id="gLamp" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FDFBF0"/><stop offset="1" stop-color="#D8D2B4"/>
+      </linearGradient>
+      <linearGradient id="gTail" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F0665C"/><stop offset="1" stop-color="#B92E28"/>
+      </linearGradient>
+      <linearGradient id="gShine" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="rgba(255,255,255,0)"/><stop offset=".5" stop-color="rgba(255,255,255,.42)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+      <radialGradient id="gTire" cx=".38" cy=".34" r=".85">
+        <stop offset="0" stop-color="#23262D"/><stop offset=".7" stop-color="#111318"/><stop offset="1" stop-color="#0A0B0E"/>
+      </radialGradient>
+      <linearGradient id="gRim" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F2F4F8"/><stop offset=".5" stop-color="#C7CDD6"/><stop offset="1" stop-color="#8B93A0"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
   <div class="sky" id="sky">
     <div class="sunGlow"></div>
     <div class="rain" id="rain"></div>
     <button class="chip" id="locBtn"><span class="dot"></span><span id="locName">위치 확인 중…</span></button>
     <div class="chip" id="gpsBadge">GPS…</div>
-
-    <div id="carBox">
-      <!-- ═══ 소프트탑 로드스터 (화이트 · 레드탑) ═══ -->
-      <svg id="carSoft" class="active" viewBox="0 0 360 150">
-        <defs>
-          <linearGradient id="bodyG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#FDFDFE"/><stop offset=".55" stop-color="#E9ECF0"/><stop offset="1" stop-color="#C6CCD5"/>
-          </linearGradient>
-          <linearGradient id="glassG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#C4E8F3"/><stop offset="1" stop-color="#84BFD4"/>
-          </linearGradient>
-          <linearGradient id="redG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#D2525C"/><stop offset="1" stop-color="#A93640"/>
-          </linearGradient>
-          <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="rgba(255,255,255,0)"/><stop offset=".5" stop-color="rgba(255,255,255,.5)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>
-          </linearGradient>
-        </defs>
-        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
-        <!-- 시트 & 롤후프 (탑 아래) -->
-        <rect x="194" y="44" width="11" height="17" rx="4" fill="#262A34"/>
-        <rect x="220" y="44" width="11" height="17" rx="4" fill="#262A34"/>
-        <path d="M196 44 q5 -10 10 0" stroke="#D9DEE6" stroke-width="3" fill="none"/>
-        <path d="M222 44 q5 -10 10 0" stroke="#D9DEE6" stroke-width="3" fill="none"/>
-        <!-- 사이드 윈도우 -->
-        <path class="win" d="M180 42 L238 42 L241 58 L178 58 Z" fill="url(#glassG)" opacity=".9"/>
-        <!-- 보디 -->
-        <path d="M24 96 C22 86 30 80 44 77 L60 74 C100 66 138 62 152 61 L162 60 L236 60 C268 58 296 62 314 70 C330 77 338 84 338 92 L336 102 C335 108 330 110 322 110 L301 110 A28 28 0 0 0 243 110 L127 110 A28 28 0 0 0 69 110 L38 110 C28 110 23 105 24 96 Z"
-          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
-        <path d="M38 103 C120 107 260 107 330 101 L329 107 L40 107 Z" fill="rgba(0,0,0,.10)"/>
-        <!-- 콕핏 -->
-        <path d="M166 60 L262 60 L266 66 L170 66 Z" fill="#1F222B"/>
-        <!-- 윈드실드 -->
-        <path d="M150 62 L172 34 L179 36 L158 63 Z" fill="#1A1D24"/>
-        <path d="M156 60 L174 37 L177 38 L161 61 Z" fill="url(#glassG)" opacity=".95"/>
-        <!-- 디테일 -->
-        <rect x="22" y="95" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
-        <path d="M34 76 C48 72 62 71 70 71 L70 76 C58 76 46 78 36 80 Z" fill="#F4E7C4" stroke="rgba(0,0,0,.14)"/>
-        <rect x="146" y="82" width="10" height="4" rx="2" fill="#1A1D24"/><circle cx="149" cy="84" r="1.4" fill="#E8A24E"/>
-        <path d="M158 63 L154 107" stroke="rgba(0,0,0,.11)"/><path d="M262 62 L266 107" stroke="rgba(0,0,0,.11)"/>
-        <rect x="246" y="72" width="3.5" height="14" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-        <path d="M150 57 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
-        <rect x="329" y="74" width="9" height="8" rx="2" fill="#D8453C"/>
-        <circle cx="318" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="328" cy="111" r="3.4" fill="#C9CFD8"/>
-        <!-- 소프트탑 (레드 · 3세그먼트) -->
-        <g class="segGrp mv">
-          <path class="segF mv" d="M176 38 Q192 28 209 27 L210 39 Q193 40 181 45 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-          <path d="M209 27 Q229 27 243 35 L239 47 Q225 40 210 39 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-          <path d="M243 35 Q261 45 271 61 L258 62 Q252 52 239 47 Z" fill="url(#redG)" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-          <path d="M244 40 Q256 48 261 57 L253 58 Q248 50 241 45 Z" fill="url(#glassG)" opacity=".85"/>
-          <path d="M226 28 L223 44" stroke="rgba(0,0,0,.18)"/>
-        </g>
-        <circle class="latchdot" cx="178" cy="34" r="4" fill="#FFE9A8"/>
-        <!-- 폴드 스택 / 토노 -->
-        <g class="stack mv">
-          <rect x="234" y="45" width="36" height="5" rx="2.5" fill="#A93640"/>
-          <rect x="238" y="50" width="32" height="5" rx="2.5" fill="#BE434D"/>
-          <rect x="242" y="55" width="28" height="4" rx="2" fill="#D2525C"/>
-        </g>
-        <rect class="tonneau mv" x="232" y="55" width="48" height="7" rx="3.5" fill="url(#bodyG)" stroke="rgba(0,0,0,.16)" stroke-width=".7"/>
-        <!-- 휠 -->
-        <g class="whl" data-x="98"></g><g class="whl" data-x="272"></g>
-        <!-- 잠금 -->
-        <g class="lockChip">
-          <rect x="166" y="4" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
-          <g class="lockGlyph"><rect x="176" y="12" width="8" height="6" rx="1.4" fill="#E08A80"/>
-          <path d="M177.5 12 v-2.4 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
-        </g>
-        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
-      </svg>
-
-      <!-- ═══ 리트랙터블 하드탑 ═══ -->
-      <svg id="carRht" viewBox="0 0 360 150">
-        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
-        <rect x="188" y="44" width="11" height="17" rx="4" fill="#262A34"/>
-        <rect x="212" y="44" width="11" height="17" rx="4" fill="#262A34"/>
-        <path class="win" d="M176 42 L228 42 L231 58 L174 58 Z" fill="url(#glassG)" opacity=".9"/>
-        <path d="M28 96 C26 86 34 80 48 77 L64 74 C98 67 128 63 142 62 L154 61 L240 61 C274 60 304 64 320 72 C332 78 338 85 338 93 L336 103 C335 108 330 110 322 110 L303 110 A28 28 0 0 0 245 110 L125 110 A28 28 0 0 0 67 110 L40 110 C30 110 27 104 28 96 Z"
-          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
-        <path d="M40 103 C120 107 260 107 330 101 L329 107 L42 107 Z" fill="rgba(0,0,0,.10)"/>
-        <path d="M158 61 L250 61 L254 67 L162 67 Z" fill="#1F222B"/>
-        <path d="M142 63 L166 34 L173 36 L150 64 Z" fill="#1A1D24"/>
-        <path d="M148 61 L168 37 L171 38 L153 62 Z" fill="url(#glassG)" opacity=".95"/>
-        <rect x="26" y="95" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
-        <path d="M38 76 C52 72 64 71 72 71 L72 76 C60 76 48 78 40 80 Z" fill="#F4E7C4" stroke="rgba(0,0,0,.14)"/>
-        <path d="M150 64 L146 107" stroke="rgba(0,0,0,.11)"/><path d="M240 63 L244 107" stroke="rgba(0,0,0,.11)"/>
-        <rect x="226" y="73" width="3.5" height="14" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-        <path d="M142 58 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
-        <rect x="329" y="76" width="9" height="8" rx="2" fill="#D8453C"/>
-        <circle cx="318" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="328" cy="111" r="3.4" fill="#C9CFD8"/>
-        <!-- 트렁크 수납 스택 (숨김) -->
-        <g class="trunkStack mv">
-          <rect x="272" y="66" width="42" height="5" rx="2.5" fill="#B9BFC9"/>
-          <rect x="276" y="71" width="36" height="4" rx="2" fill="#CDD3DB"/>
-        </g>
-        <!-- 하드 루프 (바디 컬러) -->
-        <g class="roofGrp mv">
-          <path class="roofPnl mv" d="M170 34 Q200 24 226 28 L226 40 Q200 36 172 40 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
-          <path class="rearGls mv" d="M226 28 Q248 34 262 48 L256 56 Q244 44 226 40 Z" fill="url(#glassG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
-        </g>
-        <!-- 데크 리드 (리버스 힌지) -->
-        <path class="trunkLid mv" d="M258 62 L330 64 C338 70 340 78 337 87 L258 73 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
-        <g class="whl" data-x="96"></g><g class="whl" data-x="274"></g>
-        <g class="lockChip">
-          <rect x="166" y="4" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
-          <g class="lockGlyph"><rect x="176" y="12" width="8" height="6" rx="1.4" fill="#E08A80"/>
-          <path d="M177.5 12 v-2.4 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
-        </g>
-        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
-      </svg>
-
-      <!-- ═══ 타르가 ═══ -->
-      <svg id="carTarga" viewBox="0 0 360 150">
-        <ellipse cx="180" cy="133" rx="148" ry="6.5" fill="rgba(0,0,0,.32)"/>
-        <rect x="176" y="46" width="11" height="16" rx="4" fill="#262A34"/>
-        <rect x="196" y="46" width="11" height="16" rx="4" fill="#262A34"/>
-        <path class="win" d="M172 44 L214 44 L217 59 L170 59 Z" fill="url(#glassG)" opacity=".9"/>
-        <path d="M30 98 C28 88 36 82 50 79 L66 76 C98 69 126 65 140 64 L150 63 L200 62 C250 62 292 68 316 80 C330 87 336 93 336 99 L334 105 C333 109 328 110 321 110 L301 110 A28 28 0 0 0 243 110 L125 110 A28 28 0 0 0 67 110 L42 110 C32 110 29 105 30 98 Z"
-          fill="url(#bodyG)" stroke="rgba(18,20,26,.28)" stroke-width="1"/>
-        <path d="M42 104 C120 108 260 108 326 102 L325 107 L44 107 Z" fill="rgba(0,0,0,.10)"/>
-        <path d="M156 63 L226 62 L230 68 L160 69 Z" fill="#1F222B"/>
-        <path d="M140 65 L162 36 L169 38 L148 66 Z" fill="#1A1D24"/>
-        <path d="M146 63 L164 39 L167 40 L151 64 Z" fill="url(#glassG)" opacity=".95"/>
-        <rect x="28" y="97" width="20" height="9" rx="3" fill="#1A1D24" opacity=".85"/>
-        <circle cx="52" cy="80" r="6" fill="#F4E7C4" stroke="rgba(0,0,0,.16)"/>
-        <path d="M148 66 L144 107" stroke="rgba(0,0,0,.11)"/><path d="M226 64 L230 107" stroke="rgba(0,0,0,.11)"/>
-        <rect x="212" y="74" width="3.5" height="13" rx="1.6" fill="#D9DEE6" stroke="rgba(0,0,0,.2)" stroke-width=".6"/>
-        <path d="M140 60 l-7 -3 l0 5 l7 1 Z" fill="#E9ECF0" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
-        <rect x="326" y="82" width="9" height="7" rx="2" fill="#D8453C"/>
-        <circle cx="316" cy="111" r="3.4" fill="#C9CFD8"/><circle cx="326" cy="111" r="3.4" fill="#C9CFD8"/>
-        <!-- 타르가 바 (실버 · 고정) -->
-        <path d="M216 36 L228 36 L232 63 L212 63 Z" fill="#C9CFD8" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
-        <!-- 리어 글라스 캐노피 -->
-        <path class="canopy mv" d="M228 34 Q262 38 292 62 Q302 70 306 78 L294 80 Q280 62 252 48 Q240 42 228 42 Z"
-          fill="url(#glassG)" opacity=".92" stroke="rgba(18,20,26,.3)" stroke-width=".8"/>
-        <!-- 센터 타르가 패널 -->
-        <path class="tpanel mv" d="M166 38 Q190 32 216 34 L216 42 Q190 40 168 44 Z" fill="url(#bodyG)" stroke="rgba(18,20,26,.32)" stroke-width=".8"/>
-        <g class="whl" data-x="96"></g><g class="whl" data-x="272"></g>
-        <g class="lockChip">
-          <rect x="166" y="6" width="28" height="18" rx="9" fill="rgba(12,13,16,.78)"/>
-          <g class="lockGlyph"><rect x="176" y="14" width="8" height="6" rx="1.4" fill="#E08A80"/>
-          <path d="M177.5 14 v-2.4 a2.5 2.5 0 0 1 5 0 V14" stroke="#E08A80" stroke-width="1.6" fill="none"/></g>
-        </g>
-        <rect class="shine" x="-40" y="20" width="70" height="100" fill="url(#shineG)" transform="skewX(-18)"/>
-      </svg>
+    <div class="cap-pill" id="capPill">
+      <span class="num" id="capNum">01</span><span class="txt" id="capTxt"></span>
+      <span class="prog"><i id="capProg"></i></span>
     </div>
 
-    <div class="stage-cap" id="stageCap"></div>
+    <div id="carBox">
+      <!-- ═════ NISSAN 350Z ROADSTER · 화이트/레드탑 ═════ -->
+      <svg id="zcar" class="active" viewBox="0 0 560 190">
+        <ellipse cx="280" cy="172" rx="240" ry="7" fill="rgba(0,0,0,.34)"/>
+        <!-- 콕핏(탑 아래) -->
+        <path d="M246 76 L370 71 L376 80 L248 84 Z" fill="#191C23"/>
+        <rect x="292" y="52" width="15" height="24" rx="5" fill="#252932"/>
+        <rect x="324" y="50" width="15" height="24" rx="5" fill="#252932"/>
+        <path d="M294 52 q7 -13 14 0" stroke="#D9DEE6" stroke-width="3.4" fill="none"/>
+        <path d="M326 50 q7 -13 14 0" stroke="#D9DEE6" stroke-width="3.4" fill="none"/>
+        <!-- 사이드 글라스 -->
+        <path class="win" d="M250 54 L344 58 L351 74 L246 77 Z" fill="url(#gGlass)" opacity=".92"/>
+        <!-- 보디 -->
+        <path d="M40 152 C30 150 26 142 27 132 L29 118 C30 108 36 101 46 98 L64 95 C120 88 180 83 218 80 L232 79 L380 74 C412 72 436 72 458 76 C486 80 504 86 508 96 L510 112 C511 130 506 144 494 150 L469 151 A49 49 0 0 0 371 151 L199 151 A49 49 0 0 0 101 151 L52 151 C44 151 41 152 40 152 Z"
+          fill="url(#gWhite)" stroke="rgba(16,18,24,.32)" stroke-width="1.2"/>
+        <!-- 쇼울더 하이라이트 / 로커 셰이드 -->
+        <path d="M64 93 C170 84 300 78 458 74 L458 78 C300 82 170 88 66 97 Z" fill="rgba(255,255,255,.5)"/>
+        <path d="M100 149 C240 152 380 152 470 148 L470 138 C360 143 200 143 100 140 Z" fill="rgba(10,12,18,.16)"/>
+        <!-- 윈드실드 -->
+        <path d="M232 79 L272 40 L282 42 L246 81 Z" fill="#171A21"/>
+        <path d="M240 77 L275 43 L279 44 L249 78 Z" fill="url(#gGlass)" opacity=".96"/>
+        <!-- 프론트 디테일 -->
+        <path d="M29 120 L44 118 L44 127 L29 128 Z" fill="#15181F" opacity=".85"/>
+        <circle cx="36" cy="123" r="2" fill="#E8A24E"/>
+        <path d="M62 95 C88 90 110 88 124 88 L124 93 C106 93 86 95 66 98 Z" fill="url(#gLamp)" stroke="rgba(0,0,0,.18)" stroke-width=".7"/>
+        <path d="M66 96 C86 92 106 91 122 91" stroke="rgba(0,0,0,.15)" fill="none"/>
+        <rect x="220" y="99" width="13" height="5" rx="2.5" fill="#15181F"/><circle cx="224" cy="101.5" r="1.6" fill="#E8A24E"/>
+        <!-- 도어 컷 / 핸들 / 미러 -->
+        <path d="M238 80 L232 150" stroke="rgba(10,14,20,.16)" stroke-width="1.2" fill="none"/>
+        <path d="M368 75 L377 150" stroke="rgba(10,14,20,.16)" stroke-width="1.2" fill="none"/>
+        <rect x="352" y="79" width="4.5" height="16" rx="2" fill="#DCE1E9" stroke="rgba(0,0,0,.22)" stroke-width=".6"/>
+        <path d="M240 72 L233 65 L246 61 L252 68 Z" fill="url(#gWhite)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <path d="M236 66 L244 63 L248 67 L241 70 Z" fill="#2A2E38"/>
+        <!-- 리어 -->
+        <path d="M480 82 L507 88 L506 100 L479 94 Z" fill="url(#gTail)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <circle cx="472" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <circle cx="457" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <!-- 폴드 스택 → 토노 -->
+        <g class="stack mvM">
+          <rect x="386" y="52" width="56" height="6" rx="3" fill="#932B35"/>
+          <rect x="391" y="58" width="50" height="6" rx="3" fill="#B93B46"/>
+          <rect x="396" y="64" width="44" height="5" rx="2.5" fill="#D8555F"/>
+        </g>
+        <path class="tonLid mvH" d="M376 70 L448 72 C456 74 458 79 456 84 L376 81 Z" fill="url(#gWhite)" stroke="rgba(16,18,24,.32)" stroke-width="1"/>
+        <!-- 소프트탑 -->
+        <g class="segGrp mvM">
+          <path class="segF mvM" d="M272 40 C284 34 296 33 308 33 L308 46 C296 46 286 48 278 51 Z" fill="url(#gRed)" stroke="rgba(0,0,0,.24)" stroke-width=".7"/>
+          <path d="M308 33 C324 33 340 37 352 44 L346 56 C334 50 322 46 308 46 Z" fill="url(#gRed)" stroke="rgba(0,0,0,.24)" stroke-width=".7"/>
+          <path d="M352 44 C366 52 378 60 388 70 L370 72 C362 62 354 58 346 56 Z" fill="url(#gRed)" stroke="rgba(0,0,0,.24)" stroke-width=".7"/>
+          <path d="M350 47 C360 53 368 60 374 67 L364 68 C358 61 350 56 344 53 Z" fill="url(#gGlass)" opacity=".88"/>
+          <path d="M320 34 L318 47" stroke="rgba(0,0,0,.2)"/>
+          <path d="M344 41 L340 54" stroke="rgba(0,0,0,.2)"/>
+        </g>
+        <circle class="latchdot" cx="274" cy="40" r="4.5" fill="#FFE9A8"/>
+        <g class="whl" data-x="150" data-t="sport"></g><g class="whl" data-x="420" data-t="sport"></g>
+        <g class="lockChip"><rect x="266" y="4" width="30" height="19" rx="9.5" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="277" y="12" width="8" height="7" rx="1.5" fill="#E08A80"/>
+          <path d="M278.5 12 v-2.6 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.7" fill="none"/></g></g>
+        <rect class="shine" x="-70" y="30" width="90" height="130" fill="url(#gShine)"/>
+      </svg>
+
+      <!-- ═════ BMW Z4 (E89) · 티타늄 실버 ═════ -->
+      <svg id="z4car" viewBox="0 0 560 190">
+        <ellipse cx="280" cy="172" rx="244" ry="7" fill="rgba(0,0,0,.34)"/>
+        <path d="M282 78 L386 72 L392 82 L286 86 Z" fill="#191C23"/>
+        <rect x="316" y="55" width="14" height="22" rx="5" fill="#252932"/>
+        <rect x="346" y="53" width="14" height="22" rx="5" fill="#252932"/>
+        <path class="win" d="M300 57 L360 60 L368 74 L296 78 Z" fill="url(#gGlass)" opacity=".92"/>
+        <path d="M40 154 C30 152 26 144 27 133 L30 118 C32 108 40 102 50 100 L66 98 C140 88 210 82 254 79 L266 78 L392 72 C424 70 448 71 466 75 C492 80 506 87 510 97 L512 112 C513 132 508 146 496 151 L469 151 A49 49 0 0 0 371 151 L199 151 A49 49 0 0 0 101 151 L54 152 C46 153 42 154 40 154 Z"
+          fill="url(#gSilver)" stroke="rgba(16,18,24,.32)" stroke-width="1.2"/>
+        <path d="M150 104 C240 93 340 84 452 80 L452 83 C340 87 242 96 152 107 Z" fill="rgba(255,255,255,.55)"/>
+        <path d="M66 96 C180 86 300 80 460 75 L460 78 C300 83 182 89 68 99 Z" fill="rgba(255,255,255,.4)"/>
+        <path d="M100 150 C240 153 380 153 472 149 L472 139 C360 144 200 144 100 141 Z" fill="rgba(10,12,18,.16)"/>
+        <path d="M266 78 L296 44 L306 46 L278 79 Z" fill="#171A21"/>
+        <path d="M273 76 L299 47 L303 48 L281 77 Z" fill="url(#gGlass)" opacity=".96"/>
+        <path d="M30 120 L46 118 L46 127 L30 128 Z" fill="#15181F" opacity=".85"/>
+        <path d="M48 101 C76 95 100 93 116 93 L116 98 C98 98 78 100 52 104 Z" fill="url(#gLamp)" stroke="rgba(0,0,0,.18)" stroke-width=".7"/>
+        <rect x="204" y="102" width="24" height="5" rx="2.5" fill="#15181F"/>
+        <rect x="206" y="103.2" width="20" height="1.6" rx=".8" fill="#C9CFD8"/>
+        <path d="M262 80 L254 150" stroke="rgba(10,14,20,.16)" stroke-width="1.2" fill="none"/>
+        <path d="M380 74 L390 150" stroke="rgba(10,14,20,.16)" stroke-width="1.2" fill="none"/>
+        <rect x="340" y="85" width="17" height="4.5" rx="2.2" fill="#DCE1E9" stroke="rgba(0,0,0,.22)" stroke-width=".6"/>
+        <path d="M274 70 L267 63 L280 59 L286 66 Z" fill="url(#gSilver)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <path d="M488 84 L510 90 L509 101 L487 95 Z" fill="url(#gTail)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <circle cx="474" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <circle cx="459" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <g class="trunkStack mvM">
+          <rect x="410" y="86" width="66" height="6" rx="3" fill="#98A1AE"/>
+          <rect x="416" y="92" width="56" height="5" rx="2.5" fill="#BFC7D1"/>
+        </g>
+        <path class="trunkLid mvH" d="M390 73 L500 79 C508 85 511 95 509 107 L506 118 L390 90 Z" fill="url(#gSilver)" stroke="rgba(16,18,24,.32)" stroke-width="1"/>
+        <g class="roofGrp mvH">
+          <path d="M340 37 C356 39 370 47 380 58 L392 71 L374 73 C366 62 354 52 340 49 Z" fill="url(#gMetal)" stroke="rgba(16,18,24,.34)" stroke-width=".9"/>
+          <path d="M344 41 C356 44 366 51 374 60 L378 67 L366 68 C359 59 350 50 342 48 Z" fill="url(#gGlass)" opacity=".9"/>
+          <path class="roofFront mvM" d="M296 44 C310 38 326 36 340 37 L340 49 C326 48 312 50 302 54 Z" fill="url(#gMetal)" stroke="rgba(16,18,24,.34)" stroke-width=".9"/>
+        </g>
+        <g class="whl" data-x="150" data-t="multi"></g><g class="whl" data-x="420" data-t="multi"></g>
+        <g class="lockChip"><rect x="290" y="6" width="30" height="19" rx="9.5" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="301" y="14" width="8" height="7" rx="1.5" fill="#E08A80"/>
+          <path d="M302.5 14 v-2.6 a2.5 2.5 0 0 1 5 0 V14" stroke="#E08A80" stroke-width="1.7" fill="none"/></g></g>
+        <rect class="shine" x="-70" y="30" width="90" height="130" fill="url(#gShine)"/>
+      </svg>
+
+      <!-- ═════ BMW 4시리즈 (F33) · 에스토릴 블루 ═════ -->
+      <svg id="f33car" viewBox="0 0 560 190">
+        <ellipse cx="280" cy="172" rx="248" ry="7" fill="rgba(0,0,0,.34)"/>
+        <path d="M232 80 L392 72 L398 82 L236 88 Z" fill="#12151E"/>
+        <rect x="282" y="56" width="14" height="22" rx="5" fill="#222634"/>
+        <rect x="312" y="54" width="14" height="22" rx="5" fill="#222634"/>
+        <rect x="342" y="55" width="14" height="22" rx="5" fill="#222634"/>
+        <path class="win" d="M258 55 L352 58 L372 71 L366 73 L254 78 Z" fill="url(#gGlass)" opacity=".92"/>
+        <path d="M38 152 C28 150 24 142 25 132 L28 118 C30 107 38 101 48 99 L66 96 C130 88 176 83 204 80 L216 79 L400 72 C432 70 458 71 476 75 C500 80 512 87 514 97 L516 112 C517 132 512 146 500 151 L473 151 A49 49 0 0 0 379 151 L197 151 A49 49 0 0 0 99 151 L52 151 C43 151 39 152 38 152 Z"
+          fill="url(#gBlue)" stroke="rgba(8,12,24,.5)" stroke-width="1.2"/>
+        <path d="M66 94 C180 85 300 78 468 74 L468 77 C300 81 182 88 68 97 Z" fill="rgba(255,255,255,.34)"/>
+        <path d="M140 103 C250 93 360 84 470 81 L470 84 C360 87 252 96 142 106 Z" fill="rgba(255,255,255,.22)"/>
+        <path d="M98 150 C240 153 390 153 478 149 L478 139 C370 144 200 144 98 141 Z" fill="rgba(0,4,12,.28)"/>
+        <path d="M216 79 L252 42 L262 44 L228 80 Z" fill="#0E1119"/>
+        <path d="M223 77 L255 45 L259 46 L231 78 Z" fill="url(#gGlass)" opacity=".96"/>
+        <path d="M28 120 L44 118 L44 127 L28 128 Z" fill="#0E1119" opacity=".9"/>
+        <path d="M48 98 C74 93 96 91 112 91 L112 96 C96 96 76 98 52 101 Z" fill="url(#gLamp)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <path d="M232 81 L226 151" stroke="rgba(255,255,255,.16)" stroke-width="1.2" fill="none"/>
+        <path d="M368 75 L376 151" stroke="rgba(255,255,255,.16)" stroke-width="1.2" fill="none"/>
+        <rect x="326" y="84" width="17" height="4.5" rx="2.2" fill="#D5DBE3" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>
+        <path d="M224 71 L217 64 L230 60 L236 67 Z" fill="url(#gBlue)" stroke="rgba(0,0,0,.3)" stroke-width=".7"/>
+        <path d="M488 82 L513 88 L512 100 L487 94 Z" fill="url(#gTail)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <circle cx="478" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <circle cx="463" cy="156" r="5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)"/>
+        <g class="stack mvM">
+          <rect x="416" y="88" width="70" height="6" rx="3" fill="#152C52"/>
+          <rect x="422" y="94" width="60" height="5" rx="2.5" fill="#2F5AA0"/>
+        </g>
+        <path class="trunkLid mvH" d="M396 73 L506 79 C514 85 517 95 515 107 L512 118 L396 90 Z" fill="url(#gBlue)" stroke="rgba(8,12,24,.5)" stroke-width="1"/>
+        <g class="roofGrp mvH">
+          <path class="rp3 mvM" d="M360 47 C374 54 386 62 396 72 L378 74 C370 64 362 58 354 59 Z" fill="url(#gBlue)" stroke="rgba(8,12,24,.5)" stroke-width=".9"/>
+          <path d="M362 50 C372 56 380 63 386 70 L376 71 C369 62 361 56 356 54 Z" fill="url(#gGlass)" opacity=".9"/>
+          <path class="rp2 mvM" d="M306 35 C326 36 346 40 360 47 L354 59 C342 52 324 48 306 47 Z" fill="url(#gBlue)" stroke="rgba(8,12,24,.5)" stroke-width=".9"/>
+          <path class="rp1 mvM" d="M252 42 C268 36 288 34 306 35 L306 47 C290 46 274 48 260 53 Z" fill="url(#gBlue)" stroke="rgba(8,12,24,.5)" stroke-width=".9"/>
+        </g>
+        <g class="whl" data-x="148" data-t="multi"></g><g class="whl" data-x="426" data-t="multi"></g>
+        <g class="lockChip"><rect x="266" y="4" width="30" height="19" rx="9.5" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="277" y="12" width="8" height="7" rx="1.5" fill="#E08A80"/>
+          <path d="M278.5 12 v-2.6 a2.5 2.5 0 0 1 5 0 V12" stroke="#E08A80" stroke-width="1.7" fill="none"/></g></g>
+        <rect class="shine" x="-70" y="30" width="90" height="130" fill="url(#gShine)"/>
+      </svg>
+
+      <!-- ═════ PORSCHE 911 TARGA (992) · GT 실버/블랙 루프 ═════ -->
+      <svg id="p911" viewBox="0 0 560 190">
+        <ellipse cx="280" cy="172" rx="242" ry="7" fill="rgba(0,0,0,.34)"/>
+        <path d="M216 86 L340 78 L346 90 L220 94 Z" fill="#171A21"/>
+        <rect x="272" y="62" width="14" height="22" rx="5" fill="#252932"/>
+        <rect x="302" y="60" width="14" height="22" rx="5" fill="#252932"/>
+        <path class="win" d="M214 62 L330 58 L334 78 L210 84 Z" fill="url(#gGlass)" opacity=".92"/>
+        <path d="M42 150 C32 148 28 140 29 128 L32 114 C34 104 42 98 54 96 C64 86 76 80 92 78 C110 76 126 80 138 86 L150 90 C166 94 182 92 196 88 L204 86 L340 78 C376 76 408 80 436 90 C466 100 490 108 502 118 L508 126 C509 140 502 148 490 150 L475 151 A49 49 0 0 0 381 151 L197 151 A49 49 0 0 0 99 151 L56 151 C47 151 43 151 42 150 Z"
+          fill="url(#gGrey)" stroke="rgba(16,18,24,.34)" stroke-width="1.2"/>
+        <path d="M92 76 C112 74 128 78 142 85 L150 89 C130 84 112 80 94 80 Z" fill="rgba(255,255,255,.5)"/>
+        <path d="M204 84 C260 80 320 77 340 77 C378 75 410 79 438 89 L437 92 C408 82 376 79 340 81 C316 82 254 85 206 88 Z" fill="rgba(255,255,255,.42)"/>
+        <path d="M100 149 C240 152 380 152 468 148 L468 138 C360 143 200 143 100 140 Z" fill="rgba(10,12,18,.16)"/>
+        <path d="M204 86 L248 46 L258 48 L216 87 Z" fill="#14171E"/>
+        <path d="M211 84 L251 49 L255 50 L219 85 Z" fill="url(#gGlass)" opacity=".96"/>
+        <ellipse cx="84" cy="90" rx="12" ry="10.5" fill="url(#gLamp)" stroke="rgba(0,0,0,.22)" stroke-width="1"/>
+        <ellipse cx="84" cy="90" rx="7" ry="6" fill="none" stroke="rgba(0,0,0,.14)"/>
+        <path d="M31 118 L48 116 L48 125 L31 126 Z" fill="#14171E" opacity=".85"/>
+        <path d="M222 86 L216 150" stroke="rgba(10,14,20,.18)" stroke-width="1.2" fill="none"/>
+        <path d="M330 79 L338 150" stroke="rgba(10,14,20,.18)" stroke-width="1.2" fill="none"/>
+        <rect x="296" y="90" width="17" height="4" rx="2" fill="#E4E8ED" stroke="rgba(0,0,0,.22)" stroke-width=".6"/>
+        <path d="M214 76 L207 69 L220 65 L226 72 Z" fill="url(#gGrey)" stroke="rgba(0,0,0,.22)" stroke-width=".7"/>
+        <!-- 엔진 벤트 & 리어 라이트바 -->
+        <g stroke="rgba(0,0,0,.28)" stroke-width="1.4">
+          <path d="M440 94 L444 102"/><path d="M448 96 L452 104"/><path d="M456 98 L460 106"/><path d="M464 101 L468 109"/>
+        </g>
+        <path d="M462 108 C480 112 494 118 502 124 L500 130 C490 123 476 117 460 113 Z" fill="url(#gTail)" stroke="rgba(0,0,0,.2)" stroke-width=".7"/>
+        <rect x="452" y="152" width="26" height="5" rx="2.5" fill="#C9CFD8" stroke="rgba(0,0,0,.3)" stroke-width=".6"/>
+        <!-- 패널 수납 스택 -->
+        <g class="panelStack mvM">
+          <rect x="346" y="66" width="34" height="5" rx="2.5" fill="#1B1E25"/>
+          <rect x="349" y="61" width="28" height="5" rx="2.5" fill="#3A3D46"/>
+        </g>
+        <!-- 타르가 바 -->
+        <path d="M334 42 L358 42 L364 82 L330 82 Z" fill="url(#gMetal)" stroke="rgba(16,18,24,.34)" stroke-width=".9"/>
+        <rect x="334" y="40" width="26" height="4" rx="2" fill="#1B1E25"/>
+        <g fill="rgba(20,23,30,.5)"><rect x="339" y="60" width="3" height="2"/><rect x="344" y="60" width="3" height="2"/><rect x="349" y="60" width="3" height="2"/><rect x="354" y="60" width="3" height="2"/></g>
+        <!-- 루프 패널 (블랙) -->
+        <path class="roofPanel mvM" d="M248 46 C262 40 276 38 290 38 L336 40 L336 48 L292 46 C278 46 264 49 254 53 Z" fill="url(#gDark)" stroke="rgba(0,0,0,.4)" stroke-width=".9"/>
+        <!-- 리어 캐노피 -->
+        <path class="canopy mvH" d="M358 44 C390 46 420 58 444 78 C458 90 464 100 466 108 L448 112 C438 94 416 74 386 58 C374 52 366 48 358 48 Z"
+          fill="url(#gGlass)" opacity=".92" stroke="rgba(16,18,24,.32)" stroke-width="1"/>
+        <g class="whl" data-x="150" data-t="sport"></g><g class="whl" data-x="428" data-t="sport"></g>
+        <g class="lockChip"><rect x="276" y="8" width="30" height="19" rx="9.5" fill="rgba(12,13,16,.78)"/>
+          <g class="lockGlyph"><rect x="287" y="16" width="8" height="7" rx="1.5" fill="#E08A80"/>
+          <path d="M288.5 16 v-2.6 a2.5 2.5 0 0 1 5 0 V16" stroke="#E08A80" stroke-width="1.7" fill="none"/></g></g>
+        <rect class="shine" x="-70" y="30" width="90" height="130" fill="url(#gShine)"/>
+      </svg>
+    </div>
     <div class="road"></div>
   </div>
 
-  <!-- 차종 셀렉터 -->
-  <div class="selector" id="selector">
-    <button data-m="soft" class="on">소프트탑</button>
-    <button data-m="rht">하드탑</button>
-    <button data-m="targa">타르가</button>
+  <div class="selector glass" id="selector">
+    <span class="thumb" id="thumb"></span>
+    <button data-m="zcar" class="on">350Z</button>
+    <button data-m="z4car">Z4</button>
+    <button data-m="f33car">4시리즈</button>
+    <button data-m="p911">911 타르가</button>
   </div>
+  <div class="mech-tag" id="mechTag">소프트탑 · 수동 센터 래치 + 토노 커버</div>
 
   <div class="dash">
     <div class="state" id="stLoading"><span class="pulse"></span><br><br>현 위치의 하늘을 읽는 중…</div>
-
     <div class="state" id="stDenied" style="display:none">
       위치 권한이 꺼져 있어요.<br>도시를 선택하면 그 지역 기준으로 판정할게요.
       <div class="citybtns" id="cityBtns" style="margin-top:18px"></div>
-      <button id="retryGeo">위치 권한 다시 요청</button>
+      <button class="glass" id="retryGeo">위치 권한 다시 요청</button>
     </div>
-
     <div class="state" id="stError" style="display:none">
       날씨 데이터를 불러오지 못했어요.<br>네트워크 확인 후 다시 시도해 주세요.
-      <br><button onclick="location.reload()">다시 시도</button>
+      <br><button class="glass" onclick="location.reload()">다시 시도</button>
     </div>
 
     <div id="result" style="display:none">
-      <div class="eyebrow">TODAY · OPEN-AIR VERDICT</div>
-      <div class="verdict"><h1 id="vTitle"></h1><p id="vSub"></p></div>
-      <div class="updated" id="vTime"></div>
-      <div class="alerts" id="alerts"></div>
-
-      <div class="gauges">
-        <div class="g"><div class="lb">기온/체감</div><div class="vl" id="gTemp">—</div><div class="st" id="gTempS"></div></div>
-        <div class="g"><div class="lb">자외선 UV</div><div class="vl" id="gUv">—</div><div class="st" id="gUvS"></div></div>
-        <div class="g"><div class="lb">PM2.5</div><div class="vl" id="gPm25">—</div><div class="st" id="gPm25S"></div></div>
-        <div class="g"><div class="lb">PM10</div><div class="vl" id="gPm10">—</div><div class="st" id="gPm10S"></div></div>
-        <div class="g"><div class="lb">강수확률</div><div class="vl" id="gRain">—</div><div class="st" id="gRainS"></div></div>
-        <div class="g"><div class="lb">바람</div><div class="vl" id="gWind">—</div><div class="st" id="gWindS"></div></div>
+      <div class="eyebrow reveal">TODAY · OPEN-AIR VERDICT</div>
+      <div class="verdict reveal" style="animation-delay:.06s"><h1 id="vTitle"></h1><p id="vSub"></p></div>
+      <div class="updated reveal" style="animation-delay:.1s" id="vTime"></div>
+      <div class="alerts reveal" style="animation-delay:.14s" id="alerts"></div>
+      <div class="gauges reveal" style="animation-delay:.2s">
+        <div class="g glass"><div class="lb">기온/체감</div><div class="vl" id="gTemp">—</div><div class="st" id="gTempS"></div></div>
+        <div class="g glass"><div class="lb">자외선 UV</div><div class="vl" id="gUv">—</div><div class="st" id="gUvS"></div></div>
+        <div class="g glass"><div class="lb">PM2.5</div><div class="vl" id="gPm25">—</div><div class="st" id="gPm25S"></div></div>
+        <div class="g glass"><div class="lb">PM10</div><div class="vl" id="gPm10">—</div><div class="st" id="gPm10S"></div></div>
+        <div class="g glass"><div class="lb">강수확률</div><div class="vl" id="gRain">—</div><div class="st" id="gRainS"></div></div>
+        <div class="g glass"><div class="lb">바람</div><div class="vl" id="gWind">—</div><div class="st" id="gWindS"></div></div>
       </div>
-
-      <div class="sec-t">시간대별 오픈에어링 신호</div>
-      <div class="timeline" id="timeline"></div>
-      <div class="legend">
+      <div class="sec-t reveal" style="animation-delay:.26s">시간대별 오픈에어링 신호</div>
+      <div class="timeline reveal" style="animation-delay:.3s" id="timeline"></div>
+      <div class="legend reveal" style="animation-delay:.34s">
         <span><i style="background:var(--good)"></i>좋음</span>
         <span><i style="background:var(--warn)"></i>주의</span>
         <span><i style="background:var(--bad)"></i>쉬는 시간</span>
@@ -384,74 +503,100 @@ svg.s-done .shine{opacity:1;animation:sweep 1.4s ease forwards}
 <script>
 const $=id=>document.getElementById(id);
 const CITIES=[["서울",37.5665,126.9780],["부산",35.1796,129.0756],["대구",35.8714,128.6014],["인천",37.4563,126.7052],["광주",35.1595,126.8526],["대전",36.3504,127.3845],["제주",33.4996,126.5312]];
-let verdictLevel=null, animTimer=null, model='soft';
+let verdictLevel=null, animTimer=null, model='zcar';
 
-/* 휠 렌더 (공통 컴포넌트) */
+/* ═══ 디테일 휠 (타이어/디스크/캘리퍼/스포크) ═══ */
 document.querySelectorAll('.whl').forEach(g=>{
-  const x=+g.dataset.x;
+  const x=+g.dataset.x, type=g.dataset.t;
+  const n=type==='multi'?10:5, sw=type==='multi'?'-2.2,-11 -1.6,-26 1.6,-26 2.2,-11':'-3.4,-11 -2.4,-26 2.4,-26 3.4,-11';
   let spokes='';
-  for(let i=0;i<5;i++) spokes+=`<line x1="0" y1="0" x2="0" y2="-13" stroke="#8E96A4" stroke-width="3" transform="rotate(${i*72})"/>`;
-  g.innerHTML=`<g transform="translate(${x},110)">
-    <circle r="24" fill="#17191F"/>
-    <circle r="16" fill="#D7DCE4"/>
+  for(let i=0;i<n;i++) spokes+=`<polygon points="${sw}" fill="url(#gRim)" stroke="rgba(40,46,58,.5)" stroke-width=".6" transform="rotate(${i*360/n+14})"/>`;
+  g.innerHTML=`<g transform="translate(${x},130)">
+    <circle r="40" fill="url(#gTire)"/>
+    <circle r="40" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1.5"/>
+    <circle r="33" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="2"/>
+    <circle r="18" fill="#4A5058"/>
+    <path d="M-6 -16 A17 17 0 0 1 15 -8" stroke="#C33A34" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle r="29" fill="none" stroke="url(#gRim)" stroke-width="4"/>
     <g>${spokes}</g>
-    <circle r="4.5" fill="#C63B44"/><circle r="16" fill="none" stroke="#9AA1AF" stroke-width="1.5"/>
+    <circle r="6" fill="#22252C"/><circle r="2.4" fill="#8E96A4"/>
   </g>`;
 });
 
-/* ================= 차종별 오픈 기믹 시퀀스 ================= */
-const SVGS={soft:$('carSoft'),rht:$('carRht'),targa:$('carTarga')};
+/* ═══ 실차 시퀀스 ═══ */
+const SVGS={zcar:$('zcar'),z4car:$('z4car'),f33car:$('f33car'),p911:$('p911')};
+const MECH={
+  zcar:'350Z 로드스터 · 수동 센터 래치 + 토노 커버',
+  z4car:'Z4 E89 · 2피스 리트랙터블 하드탑',
+  f33car:'4시리즈 F33 · 3피스 리트랙터블 하드탑',
+  p911:'911 타르가 992 · 루프 키네마틱',
+};
 const SEQS={
-  soft:[
-    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-latch',cap:'프론트 래치 해제',d:720},
-    {c:'s-f1',cap:'프론트 보우 폴딩',d:980},
-    {c:'s-f2',cap:'Z-폴드 진행',d:820},
-    {c:'s-stow',cap:'탑 웰 수납',d:760},
-    {c:'s-ton',cap:'토노 커버 클로즈',d:820},
-    {c:'s-done',cap:'오픈에어링 준비 완료',d:0},
+  zcar:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:560},{c:'s-w2',cap:'사이드 윈도우 다운',d:560},
+    {c:'s-latch',cap:'센터 래치 수동 해제',d:900},
+    {c:'s-ton',cap:'토노 커버 오픈',d:1400},
+    {c:'s-f1',cap:'탑 폴딩',d:1150},
+    {c:'s-f2',cap:'Z-폴드 · 웰 수납',d:1200},
+    {c:'s-tc',cap:'토노 커버 클로즈',d:1550,settle:1},
+    {c:'s-done',cap:'오픈 에어 완료',d:0},
   ],
-  rht:[
-    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-deck',cap:'데크 리드 리버스 오픈',d:1050},
-    {c:'s-unlock',cap:'루프 언록 · 리어 글라스 틸트',d:820},
-    {c:'s-slide',cap:'루프 패널 트렁크 수납',d:1050},
-    {c:'s-close',cap:'데크 리드 클로즈',d:980},
-    {c:'s-done',cap:'오픈에어링 준비 완료',d:0},
+  z4car:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:560},{c:'s-w2',cap:'사이드 윈도우 다운',d:560},
+    {c:'s-deck',cap:'클램셸 데크 리버스 오픈',d:1650},
+    {c:'s-lift',cap:'프론트 루프 패널 리프트',d:1050},
+    {c:'s-stk',cap:'패널 스태킹',d:1150},
+    {c:'s-drop',cap:'루프 트렁크 수납',d:1450},
+    {c:'s-cls',cap:'클램셸 클로즈',d:1650,settle:1},
+    {c:'s-done',cap:'오픈 에어 완료',d:0},
   ],
-  targa:[
-    {c:'s-w1',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-w2',cap:'사이드 윈도우 다운',d:520},
-    {c:'s-lift',cap:'리어 캐노피 리프트',d:1050},
-    {c:'s-unlock',cap:'타르가 패널 언록',d:760},
-    {c:'s-slide',cap:'패널 후방 수납',d:980},
-    {c:'s-close',cap:'캐노피 클로즈',d:1000},
+  f33car:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:560},{c:'s-w2',cap:'사이드 윈도우 다운',d:560},
+    {c:'s-deck',cap:'클램셸 데크 리버스 오픈',d:1650},
+    {c:'s-unl',cap:'루프 3분할 언록',d:980},
+    {c:'s-fd1',cap:'프론트 패널 폴딩',d:1050},
+    {c:'s-fd2',cap:'미드 · 리어 패널 폴딩',d:1150},
+    {c:'s-drop',cap:'스택 트렁크 수납',d:1450},
+    {c:'s-cls',cap:'클램셸 클로즈',d:1650,settle:1},
+    {c:'s-done',cap:'오픈 에어 완료',d:0},
+  ],
+  p911:[
+    {c:'s-w1',cap:'사이드 윈도우 다운',d:560},{c:'s-w2',cap:'사이드 윈도우 다운',d:560},
+    {c:'s-lift',cap:'리어 캐노피 스윙 업',d:1850},
+    {c:'s-rel',cap:'루프 패널 릴리즈',d:920},
+    {c:'s-fold',cap:'패널 폴딩 · 후방 수납',d:1500},
+    {c:'s-cls',cap:'캐노피 클로즈',d:1850,settle:1},
     {c:'s-done',cap:'타르가 오픈 완료',d:0},
   ],
 };
 function resetCar(){
   clearTimeout(animTimer);
-  Object.values(SVGS).forEach(s=>s.className.baseVal=s.classList.contains('active')?'active':'');
-  $('stageCap').textContent='';
+  Object.values(SVGS).forEach(s=>{s.setAttribute('class',s.classList.contains('active')?'active':'')});
+  $('capPill').classList.remove('on');
 }
 function playOpen(){
   resetCar();
   const svg=SVGS[model], seq=SEQS[model];
+  const pill=$('capPill');pill.classList.add('on');
   let i=0;
   (function step(){
     const f=seq[i];
     svg.classList.add(f.c);
-    $('stageCap').textContent=f.cap;
+    if(f.settle){svg.classList.remove('settle');void svg.getBoundingClientRect();svg.classList.add('settle');}
+    $('capNum').textContent=String(i+1).padStart(2,'0');
+    $('capTxt').textContent=f.cap;
+    $('capProg').style.width=Math.round(((i+1)/seq.length)*100)+'%';
     if(++i<seq.length) animTimer=setTimeout(step,f.d);
-    else setTimeout(()=>$('stageCap').textContent='',3000);
+    else animTimer=setTimeout(()=>pill.classList.remove('on'),3200);
   })();
 }
 function playLocked(){
   resetCar();
   SVGS[model].classList.add('s-lock');
-  $('stageCap').textContent='탑 록 유지 — 오늘은 쉬는 날';
+  const pill=$('capPill');pill.classList.add('on');
+  $('capNum').textContent='—';
+  $('capTxt').textContent='탑 록 유지 · 오늘은 쉬는 날';
+  $('capProg').style.width='0%';
 }
 $('carBox').addEventListener('click',()=>{
   if(verdictLevel==='bad'){
@@ -460,31 +605,37 @@ $('carBox').addEventListener('click',()=>{
   }
   if(verdictLevel) playOpen();
 });
-/* 차종 셀렉터 */
+function moveThumb(btn){
+  const t=$('thumb');
+  t.style.width=btn.offsetWidth+'px';
+  t.style.transform=`translateX(${btn.offsetLeft-4}px)`;
+}
 $('selector').addEventListener('click',e=>{
   const btn=e.target.closest('button');if(!btn)return;
   document.querySelectorAll('#selector button').forEach(b=>b.classList.toggle('on',b===btn));
+  moveThumb(btn);
   model=btn.dataset.m;
+  $('mechTag').textContent=MECH[model];
   Object.entries(SVGS).forEach(([k,s])=>s.classList.toggle('active',k===model));
   resetCar();
   if(verdictLevel==='bad') playLocked();
-  else if(verdictLevel) setTimeout(playOpen,250);
+  else if(verdictLevel) setTimeout(playOpen,280);
 });
+addEventListener('load',()=>moveThumb(document.querySelector('#selector button.on')));
+addEventListener('resize',()=>moveThumb(document.querySelector('#selector button.on')));
 
-/* 구름/비 */
 (function(){
   const r=$('rain');
   for(let i=0;i<26;i++){const d=document.createElement('div');d.className='streak';
     d.style.left=(Math.random()*100)+'%';d.style.animationDelay=(Math.random()*0.75)+'s';
     d.style.animationDuration=(0.55+Math.random()*0.45)+'s';r.appendChild(d);}
   const sky=$('sky');
-  [[40,52,110,26,40],[200,96,150,32,58],[-60,140,120,24,74]].forEach(([l,t,w,h,dur])=>{
+  [[40,52,110,26,42],[210,96,150,32,60],[-60,140,120,24,76]].forEach(([l,t,w,h,dur])=>{
     const c=document.createElement('div');c.className='cl';
     c.style.cssText=`left:${l}px;top:${t}px;width:${w}px;height:${h}px;animation-duration:${dur}s`;
     sky.appendChild(c);});
 })();
 
-/* ================= 위치 ================= */
 function start(){
   $('gpsBadge').textContent='GPS…';$('gpsBadge').classList.remove('ok');
   if(!navigator.geolocation){showCityPick();return;}
@@ -503,7 +654,7 @@ function showCityPick(){
   $('stLoading').style.display='none';$('stDenied').style.display='block';
   $('gpsBadge').textContent='GPS 꺼짐';
   const box=$('cityBtns');box.innerHTML='';
-  CITIES.forEach(([n,la,lo])=>{const b=document.createElement('button');b.textContent=n;
+  CITIES.forEach(([n,la,lo])=>{const b=document.createElement('button');b.className='glass';b.textContent=n;
     b.onclick=()=>{$('stDenied').style.display='none';$('stLoading').style.display='block';load(la,lo,n);};
     box.appendChild(b);});
   $('locName').textContent='위치 미확인';
@@ -518,13 +669,11 @@ async function placeName(lat,lon){
     return [j.city,j.locality].filter(Boolean).join(' ')||'내 위치';
   }catch(e){return '내 위치';}
 }
-
-/* ================= 날씨 (KMA) ================= */
 async function fetchWeather(lat,lon,useKma){
-  const model=useKma?'&models=kma_seamless':'';
+  const m=useKma?'&models=kma_seamless':'';
   const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`+
     `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,uv_index,precipitation`+
-    `&hourly=precipitation_probability,weather_code&timezone=auto&forecast_days=1&cell_selection=nearest${model}`;
+    `&hourly=precipitation_probability,weather_code&timezone=auto&forecast_days=1&cell_selection=nearest${m}`;
   const r=await fetch(url);
   if(!r.ok) throw 0;
   const j=await r.json();
@@ -544,12 +693,10 @@ async function load(lat,lon,cityName){
     $('stLoading').style.display='none';$('stError').style.display='block';
   }
 }
-
 const isRainCode=c=>(c>=51&&c<=67)||(c>=71&&c<=77)||(c>=80&&c<=86)||(c>=95);
 function pmGrade25(v){return v<=15?0:v<=35?1:v<=75?2:3}
 function pmGrade10(v){return v<=30?0:v<=80?1:v<=150?2:3}
 const PM_TXT=['좋음','보통','나쁨','매우나쁨'];
-
 function render(w,a){
   const cur=w.current, air=a.current;
   const now=new Date(cur.time), nowH=now.getHours();
@@ -566,7 +713,6 @@ function render(w,a){
   const g25=pmGrade25(air.pm2_5), g10=pmGrade10(air.pm10), pmWorst=Math.max(g25,g10);
   const wind=cur.wind_speed_10m, temp=cur.temperature_2m, feel=cur.apparent_temperature, uv=cur.uv_index??0;
   const rainingNow=isRainCode(cur.weather_code)||cur.precipitation>0;
-
   const bads=[],warns=[],goods=[];
   if(rainingNow) bads.push(['🌧','지금 비가 내리고 있어요. 탑은 그대로 두세요.']);
   else if(maxProb>=60) bads.push(['🌧',`강수확률 최대 ${maxProb}%. ${rainSoonH?rainSoonH+'시경 비 가능성 — ':''}오픈에어링은 다음 기회에.`]);
@@ -581,19 +727,16 @@ function render(w,a){
   else if(uv>=6) warns.push(['☀','햇빛이 강한 날 — 썬크림 바르고 출발하세요.']);
   if(temp>=33) warns.push(['🥵',`기온 ${Math.round(temp)}°C — 오픈 시 에어컨 무력화. 정체 구간 열사병 주의, 물을 챙기세요.`]);
   else if(temp>=30) warns.push(['🌡',`기온 ${Math.round(temp)}°C — 한낮보다는 아침·저녁의 오픈에어링을 추천해요.`]);
-
   let level;
   if(bads.length)level='bad';
   else if(warns.length)level='warn';
   else{level='good';goods.push(['🏁','비·미세먼지·바람 모두 완벽. 하늘이 허락한 하루입니다.']);}
   verdictLevel=level;
-
   const sky=$('sky');
   sky.classList.remove('theme-warn','theme-bad');
   if(level==='warn')sky.classList.add('theme-warn');
   if(level==='bad')sky.classList.add('theme-bad');
   $('rain').classList.toggle('on',rainingNow);
-
   const V={good:['오픈에어링하기 좋은 날','하늘이 허락한 드라이브'],
            warn:['오픈에어링 할 수 있는 날','몇 가지만 챙기면 충분해요'],
            bad:['오픈에어링 쉬는 날','오늘은 탑을 아껴 두세요']}[level];
@@ -601,19 +744,16 @@ function render(w,a){
   $('vSub').textContent=V[1];
   $('vTime').textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})
     +' '+String(nowH).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+' 기준 · KMA 모델';
-
   const al=$('alerts');al.innerHTML='';
   [...bads.map(x=>['a-bad',...x]),...warns.map(x=>['a-warn',...x]),...goods.map(x=>['a-good',...x])]
-    .forEach(([cl,ic,tx])=>{const d=document.createElement('div');d.className='alert '+cl;
+    .forEach(([cl,ic,tx])=>{const d=document.createElement('div');d.className='alert glass '+cl;
       d.innerHTML=`<span class="ic">${ic}</span><span>${tx}</span>`;al.appendChild(d);});
-
   setG('gTemp',`${Math.round(temp)}° / ${Math.round(feel)}°`, temp>=33||feel<=0?'ng':temp>=30||feel<8?'mid':'ok', temp>=30?'더움':feel<8?'쌀쌀':'적당');
   setG('gUv',(+uv).toFixed(1), uv>=8?'ng':uv>=6?'mid':'ok', uv>=8?'매우강함':uv>=6?'강함':uv>=3?'보통':'낮음');
   setG('gPm25',Math.round(air.pm2_5), g25>=2?'ng':g25===1?'mid':'ok', PM_TXT[g25]);
   setG('gPm10',Math.round(air.pm10), g10>=2?'ng':g10===1?'mid':'ok', PM_TXT[g10]);
   setG('gRain',maxProb+'%', maxProb>=60?'ng':maxProb>=30?'mid':'ok', maxProb>=60?'비 옴':maxProb>=30?'가능성':'맑음');
   setG('gWind',Math.round(wind)+'㎞', wind>=40?'ng':wind>=25?'mid':'ok', wind>=40?'강풍':wind>=25?'다소강함':'양호');
-
   const tl=$('timeline');tl.innerHTML='';
   const EMO=c=>isRainCode(c)?'🌧':c<=1?'☀':c===2?'⛅':'☁';
   w.hourly.time.forEach((t,i)=>{
@@ -622,15 +762,13 @@ function render(w,a){
     let s='ok';
     if(isRainCode(code)||prob>=60||pmWorst>=3)s='ng';
     else if(prob>=30||pmWorst===2)s='mid';
-    const div=document.createElement('div');div.className='hr'+(h===nowH?' now':'');
+    const div=document.createElement('div');div.className='hr glass'+(h===nowH?' now':'');
     div.innerHTML=`<div class="h">${h}시</div><div class="e">${EMO(code)}</div><div class="d ${s}"></div>`;
     tl.appendChild(div);
   });
-
   $('stLoading').style.display='none';$('stError').style.display='none';
   $('result').style.display='block';
-
-  setTimeout(()=>{ level==='bad'?playLocked():playOpen(); },600);
+  setTimeout(()=>{ level==='bad'?playLocked():playOpen(); },650);
   const nowEl=tl.querySelector('.hr.now');
   if(nowEl)nowEl.scrollIntoView({inline:'center',block:'nearest'});
 }
